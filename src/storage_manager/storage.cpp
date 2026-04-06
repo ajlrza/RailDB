@@ -33,6 +33,7 @@
 
             while (std::getline(directory, directory_items)) {
                 std::cout << directory_items << std::endl;
+                directory.close()
             }
         }
     }
@@ -49,7 +50,33 @@
 
             while (std::getline(file, file_content)) {
                 std::cout << file_content << std::endl;
+                directory.close();
             }
+
+        }
+    }
+
+    void writeFile(std::string directory_name, std::string file_name) {
+        std::fstream file;
+
+        assert(!std::filesystem::exists(directory_name + "/" + file_name));
+
+        file.open(directory_name + "/" + file_name, std::ios::out);
+
+        if (file.is_open()) {
+            std::string file_inputs;
+            int character_size = 0;
+            char* characters = new char[character_size];
+
+            std::cin >> file_inputs;
+
+            for (int character = 0; character < file_inputs.length(); character++) 
+                for (char character : file_inputs) {
+                    character_size++;
+                    characters[character];
+                }
+            }
+            file << characters;
         }
     }
 
