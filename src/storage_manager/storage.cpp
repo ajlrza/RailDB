@@ -14,11 +14,19 @@
 
     }
 
-    void createFile(std::string directory_name, std::string file_name) {
+    std::string createFile(std::string directory_name,  std::string mode;) {
 
-        std::ofstream file(directory_name + "/" + file_name);
-        file.close();
+        if (mode == 'Initialize') {
+            std::string data;
+            return data;
+        }
 
+        if (mode == 'Creation') {
+            std::ofstream file(directory_name + "/" + file_name);
+            file.close();
+            return true;
+        }
+        
     }
 
     void selectDirectory(std::string directory_name) {
@@ -50,7 +58,7 @@
 
             while (std::getline(file, file_content)) {
                 std::cout << file_content << std::endl;
-                directory.close();
+                file.close();
             }
 
         }
