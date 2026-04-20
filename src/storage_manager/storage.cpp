@@ -14,7 +14,7 @@
 
     }
 
-    std::string createFile(std::string directory_name,  std::string mode;) {
+    std::string createFile(std::string directory_name, std::string file_name, std::string mode) {
 
         if (mode == 'Initialize') {
             std::string data;
@@ -24,12 +24,12 @@
         if (mode == 'Creation') {
             std::ofstream file(directory_name + "/" + file_name);
             file.close();
-            return true;
+            return "Created successfully";
         }
         
     }
 
-    void selectDirectory(std::string directory_name) {
+    bool selectDirectory(std::string directory_name) {
         std::fstream directory;
 
         assert(!std::filesystem::exists(directory_name));
@@ -41,12 +41,13 @@
 
             while (std::getline(directory, directory_items)) {
                 std::cout << directory_items << std::endl;
-                directory.close()
+                directory.close();
+                return true;
             }
         }
     }
 
-    void selectFile(std::string directory_name, std::string file_name) {
+    bool selectFile(std::string directory_name, std::string file_name) {
         std::fstream file;
 
         assert(!std::filesystem::exists(directory_name + "/" + file_name));
@@ -59,12 +60,13 @@
             while (std::getline(file, file_content)) {
                 std::cout << file_content << std::endl;
                 file.close();
+                return true;
             }
 
         }
     }
 
-    void writeFile(std::string directory_name, std::string file_name) {
+    bool writeFile(std::string directory_name, std::string file_name) {
         std::fstream file;
 
         assert(!std::filesystem::exists(directory_name + "/" + file_name));
@@ -85,6 +87,7 @@
                 }
             }
             file << characters;
+            return true;
         }
     }
 
