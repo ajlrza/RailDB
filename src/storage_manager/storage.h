@@ -8,7 +8,7 @@
 #include <string>
 using namespace std;
 
-void createDirectory(std::string directory_name);
+bool createDirectory(std::string directory_name);
 
 std::string createFile(std::string directory_name, std::string mode);
 

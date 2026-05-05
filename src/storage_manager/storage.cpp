@@ -7,21 +7,22 @@
     using namespace std;
 
 
-    void createDirectory(std::string directory_name) {
+    bool createDirectory(std::string directory_name) {
         
         assert(!std::filesystem::create_directory(directory_name));
         std::filesystem::create_directory(directory_name);
+        return true;
 
     }
 
     std::string createFile(std::string directory_name, std::string file_name, std::string mode) {
 
-        if (mode == 'Initialize') {
+        if (mode == "Initialization") {
             std::string data;
             return data;
         }
 
-        if (mode == 'Creation') {
+        if (mode == "Creation") {
             std::ofstream file(directory_name + "/" + file_name);
             file.close();
             return "Created successfully";
@@ -76,22 +77,16 @@
         if (file.is_open()) {
             std::string file_inputs;
             int character_size = 0;
-            char* characters = new char[character_size];
 
             std::cin >> file_inputs;
 
-            for (int character = 0; character < file_inputs.length(); character++) 
+            for (int character = 0; character < file_inputs.length(); character++) {
                 for (char character : file_inputs) {
-                    character_size++;
-                    characters[character];
+                    file << character;
                 }
             }
-            file << characters;
+
             return true;
         }
     }
 
-    int main() {
-        
-
-    };
