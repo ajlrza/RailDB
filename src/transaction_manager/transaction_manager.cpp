@@ -20,49 +20,45 @@ struct queueNode {
 
 class transactionsQueue {
     public:
-        int howMany = 0;
         queueNode *tailPointer;
         queueNode *headPointer;
         queueNode node;
         std::vector<queueNode> transactionQueue;
 
     void Enqueue(queueNode &el) {
-        if (this->howMany == 0) {
+        if (this->transactionQueue.size() == 0) {
            this->transactionQueue.push_back(el);
            this->headPointer = &transactionQueue.back();
            this->tailPointer = nullptr;
-           howMany = howMany + 1;
         }
-        else if (this->howMany >= 1) {
+        else if (this->transactionQueue.size() >= 1) {
             this->headPointer = &transactionQueue.front();
             this->transactionQueue.push_back(el);
             this->tailPointer = &transactionQueue.back();
-            howMany = howMany + 1;
         }
     }
 
-    void Dequeue(queueNode &el) {
-       if (this->howMany == 1) {
-            howMany = 0;
-            this->headPointer = nullptr;
-            this->tailPointer = nullptr;
+    queueNode Dequeue(queueNode &el) {
+       if (this->transactionQueue.size() == 1) {
+            el = transactionQueue[0];
+            transactionQueue.pop_back();
        }
-       else if (this->howMany > 1) {
-            howMany = howMany - 1;
-            if (howMany == 0) {             
+       if (this->transactionQueue.size() == 0) {             
                 this->headPointer = nullptr;
                 this->tailPointer = nullptr;
-            }
-            else {
-                int index;
-                for (size_t i = 0; i < transactionQueue.size(); ++i) {
-                    index = (i + 1) % transactionQueue.size();
-                    transactionQueue[i] = transactionQueue[index];
-                }
-                this->headPointer = &transactionQueue.front();
-                this->tailPointer = &transactionQueue.back();
-            }
        }
+       else if (this->transactionQueue.size() > 1) {
+            int index;
+            for (size_t i = 0; i < transactionQueue.size() - 1; ++i) {
+                index = (i + 1) % transactionQueue.size();
+                transactionQueue[i] = transactionQueue[i + 1];
+            }
+            el = transactionQueue.back();
+            transactionQueue.pop_back();
+            this->headPointer = &transactionQueue.front();
+            this->tailPointer = &transactionQueue.back();
+        }
+        return el;
     }
 };
 
