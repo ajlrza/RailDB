@@ -4,7 +4,6 @@
 #include <map>
 #include <filesystem>
 #include <string>
-#include <vector>
 using namespace std;
 
 struct queueNode {
@@ -12,53 +11,62 @@ struct queueNode {
     std::string query;
 };
 
-// Complete queue computer logic and fix shit
-// Queue ver 0.45
-
-
-// Queue for incoming transaction request and serialization
 
 class transactionsQueue {
+    private:
+        int head = 0;
+        int tail = 0;
+        static const int MAX_SIZE = 5; 
+        queueNode transactionQ[MAX_SIZE];
+        int count = 0;
+        
     public:
-        queueNode *tailPointer;
-        queueNode *headPointer;
-        queueNode node;
-        std::vector<queueNode> transactionQueue;
-
-    void Enqueue(queueNode &el) {
-        if (this->transactionQueue.size() == 0) {
-           this->transactionQueue.push_back(el);
-           this->headPointer = &transactionQueue.back();
-           this->tailPointer = nullptr;
-        }
-        else if (this->transactionQueue.size() >= 1) {
-            this->headPointer = &transactionQueue.front();
-            this->transactionQueue.push_back(el);
-            this->tailPointer = &transactionQueue.back();
-        }
-    }
-
-    queueNode Dequeue(queueNode &el) {
-       if (this->transactionQueue.size() == 1) {
-            el = transactionQueue[0];
-            transactionQueue.pop_back();
-       }
-       if (this->transactionQueue.size() == 0) {             
-                this->headPointer = nullptr;
-                this->tailPointer = nullptr;
-       }
-       else if (this->transactionQueue.size() > 1) {
-            int index;
-            for (size_t i = 0; i < transactionQueue.size() - 1; ++i) {
-                index = (i + 1) % transactionQueue.size();
-                transactionQueue[i] = transactionQueue[i + 1];
+        bool Enqueue(queueNode &el) {
+            if (count == 5) {
+            std::cout << "Queue is full at the moment, please wait."; 
+            return false;
             }
-            el = transactionQueue.back();
-            transactionQueue.pop_back();
-            this->headPointer = &transactionQueue.front();
-            this->tailPointer = &transactionQueue.back();
+            this->transactionQ[tail] = el;
+            this->tail = (tail + 1) % MAX_SIZE;  
+            count += 1;
+            return true;
         }
-        return el;
-    }
+
+        bool Dequeue() {
+        if (this->count == 0) {
+            return false;
+        }
+
+        else if (this->count > 1) {
+                this->head = (head + 1) % MAX_SIZE;
+                count = count - 1;
+            }
+            return true;
+        }
+
+        queueNode Front() {
+            if (count == 0) {
+                throw std::runtime_error("Queue is empty, no front element!");
+            }
+            return transactionQ[head];
+        }
+
+        queueNode Back() {
+            if (count == 0) {
+                throw std::runtime_error("Queue is empty, no back element!");
+            }
+            return transactionQ[tail];
+        }
+
+        bool isEmpty() {
+            if (count == 0) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
 };
 
+
+// implement std::mutex
