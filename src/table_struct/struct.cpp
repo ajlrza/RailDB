@@ -105,8 +105,12 @@ class tableData {
             }
         };
 
-        void createTable() {
+        // Need to create not in RAM, cuz if program shuts down table wont last
 
+        // need a memory allocator
+
+        void createTable() {
+            
         };
 
         void deleteTable() {
