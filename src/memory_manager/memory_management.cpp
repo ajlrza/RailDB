@@ -5,10 +5,23 @@
 #include <filesystem>
 #include <string>
 #include <any>
+#include <cstddef>
 using namespace std;
 
-class memoryCreator {
+// RAM management
+// SOON
+
+class memoryCreator: public std::pmr::memory_resource {
+    
+    memoryCreator() {
+
+    }
+    
     private:
+    void* do_allocate(std::size_t bytes, std::size_t alignment) override {
+       
+        return ::operator new(bytes); 
+    }
 
     public:
 

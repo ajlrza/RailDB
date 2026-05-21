@@ -10,12 +10,12 @@ using namespace std;
 
 bool createDirectory(std::string directory_name);
 
-std::string createFile(std::string directory_name, std::string mode);
+std::string createFile(std::string directory_name, std::string file_name, std::string mode);
 
 bool selectDirectory(std::string directory_name);
 
 bool selectFile(std::string directory_name, std::string file_name);
 
-bool writeFile(std::string directory_name, std::string file_name);
+bool writeFile(std::string directory_name, std::string file_name, uint32_t data = 0);
 
 #endif
