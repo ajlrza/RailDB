@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <assert.h>
+#include <table_management.h>
 #include <map>
 #include <filesystem>
 #include <string>
@@ -17,7 +18,7 @@ bool createDirectory(std::string directory_name) {
 
 }
 
-std::string createFile(std::string directory_name, std::string file_name, std::string mode) {
+std::string createFile(table &table_name, std::string schema_name, std::string file_name, std::string mode) {
 
     if (mode == "Initialization") {
         std::string data;
@@ -25,7 +26,7 @@ std::string createFile(std::string directory_name, std::string file_name, std::s
     }
 
     if (mode == "Creation") {
-        std::ofstream file(directory_name + "/" + file_name);
+        std::ofstream file(schema_name + "/" + file_name);
         file.close();
         return "Created successfully";
     }
@@ -50,6 +51,7 @@ bool selectDirectory(std::string directory_name) {
     }
 }
 
+// Need to determine the logic, like in here, should the function accept data/value? assuming that selectin file means writing?
 bool selectFile(std::string directory_name, std::string file_name) {
     std::fstream file;
 
@@ -69,6 +71,7 @@ bool selectFile(std::string directory_name, std::string file_name) {
     }
 }
 
+// so what even are the other two selects for..
 bool writeFile(std::string directory_name, std::string file_name, uint32_t data = 0) {
     std::fstream file;
 

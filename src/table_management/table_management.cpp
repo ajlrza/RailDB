@@ -4,6 +4,7 @@
 #include <storage.h>
 #include <map>
 #include <cstddef>
+#include <cstdint>
 #include <filesystem>
 #include <string>
 #include <random>
@@ -49,8 +50,7 @@ struct rowData {
 // dont use stdd vector and std any 
 struct colData {
     std::string colValue;
-    std::vector<std::any> Col;
-    int colCount = 0;
+    int colID;
 };
 
 // dont use stdd vector and std any 
@@ -96,6 +96,7 @@ class IntDataType: public DataType {
                 break;
            }
         }
+
     private:
         std::string GetName() const override {
             return "Int";
@@ -139,6 +140,46 @@ class BoolDataType: public DataType {
     int GetSize() const override {
 
     };
+};
+
+class SchemaCreator {
+    public:
+        SchemaCreator(uint32_t schema_name);
+
+        void setStruct() {
+            uint32_t schema_name = schema_name;
+            this->schema.schema_name = schema_name;
+        };
+
+        void setTable(table Table) {
+            table Table = Table;
+            this->schema.table = Table;
+        };
+
+        void setViews(uint32_t views) {
+            uint32_t views = views;
+            this->schema.views = views;
+        }
+
+        void setStoredP(uint32_t stored_procedures) {
+            uint32_t stored_procedures = stored_procedures;
+            this->schema.stored_procedures = stored_procedures;
+        }
+
+        bool storeSchema() {
+            if (createDirectory())
+        }
+
+    private:
+        // views, table, stored procedures
+        struct Schema {
+            uint32_t schema_name;
+            //need this one to be a struct or class for a data structure
+            table table;
+            uint32_t views;
+            uint32_t stored_procedures;
+        };
+        Schema schema;
 };
 
 int randomIDAssigner() {
@@ -186,8 +227,17 @@ void createTable(std::string name, std::string directory_name) {
 
 };
 
-void addCol(std::string col_name, std::string data_type) {
-
+// Oh yeah THE DIRECTORY itself should be the schema(?)
+void addCol(std::string schema_name, std::string table_name, std::string col_name, std::string data_type) {
+     colData columnData;
+     // wait what do i have two different select for? ..
+     // we oughta get where the column is from or get the schema it is from.. need to figure it out
+     if (selectFile(schema_name, table_name)) {
+        // assume that we get all the columns from this schema
+        // jesus i really gotta get low level and convert to uint32_t? or just manage them all myself
+        writeFile(schema_name, table_name, columnData);
+     }
 };
 
+// use BITWISE manipulation in adding rows
 
