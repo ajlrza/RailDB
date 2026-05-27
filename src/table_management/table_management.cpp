@@ -2,6 +2,7 @@
 #include <fstream>
 #include <assert.h>
 #include <storage.h>
+#include <data_type_template.h>
 #include <map>
 #include <cstddef>
 #include <cstdint>
@@ -16,35 +17,94 @@ using namespace std;
 
 // This is also where the table queries would live in
 
-
-
 // STRUCTS FOR RAW BYTES
 struct intData {
     int intValue = 0;
     // should there be metadata?
+    bool operator!=(int check_value) const {
+        // If this row's ID is 0, it does not exist
+        // If it's anything else, we return true (it does not equal 0, so it's valid).
+        return this->intValue != check_value; 
+    }
+
+    int operator<<(int intValue) const {
+        // Since write template's behavior does "<<" operator
+        // The struct needs to follow it
+        return this->intValue;
+    }
 };
 
 struct boolData {
-    bool boolValue = false;
-    // should there be metadata? 
+    bool boolValue = 0;
+    // To comply with the template, for an empty bool data cell should it be just 0?, but a bool data  can be t or f
+    // 0 = f... and some databases use bool data columns
+    // should there be metadata?
+    
+    bool operator!=(int check_value) const {
+        // If this bool value is "", undefined, null, return false
+        // If it's anything else, we return true (it does not equal 0, so it's valid).
+        return this->boolValue != check_value; 
+    }
+
+    bool operator<<(bool boolValue) const {
+        // Since write template's behavior does "<<" operator
+        // The struct needs to follow it
+        return this->boolValue;
+    }
 };
 
 struct floatData {
-    float floatValue = 0.1;
+    float floatValue = 0.0;
     // should there be metadata?
+    bool operator!=(int check_value) const {
+        // If the float data is 0 or false?, it does not exist
+        // If it's anything else, we return true (it does not equal 0, so it's valid).
+        return this->floatValue != check_value; 
+    }
+
+    float operator<<(float floatValue) const {
+        // Since write template's behavior does "<<" operator
+        // The struct needs to follow it
+        return this->floatValue;
+    }
 };
 
 struct stringData {
     std::string stringArray = "";
     // should there be metadata?
+    bool operator!=(std::string check_value) const {
+        // If this stringArray is "", it does not exist
+        // If it's anything else, we return true (it does not equal 0, so it's valid).
+        return this->stringArray != check_value; 
+    }
+
+    std::string operator<<(std::string stringArray) const {
+        // Since write template's behavior does "<<" operator
+        // The struct needs to follow it
+        return this->stringArray;
+    }
 };
 
 // dont use stdd vector and std any 
 struct rowData {
-    std::any rowValue;
-    std::vector<std::any> Row;
+
+    uint32_t rowValue;
+    //manual array? Row;
     int index;
     int rowCount = 0;
+
+    bool operator!=(int check_value) const {
+        // If this row's ID is 0, it does not exist
+        // If it's anything else, we return true (it does not equal 0, so it's valid).
+        return this->index != check_value; 
+    }
+
+    uint32_t operator<<(uint32_t rowValue) const {
+        // Since write template's behavior does "<<" operator
+        // The struct needs to follow it
+        return this->rowValue;
+    }
+
 };
 
 // dont use stdd vector and std any 
@@ -223,7 +283,7 @@ void createTable(std::string name, std::string directory_name) {
     createFile(directory_name, Table.tableName, "Creation");
 
     // Write to file the metadata
-    writeFile(directory_name, Table.tableName, Table.tableID);
+
 
 };
 

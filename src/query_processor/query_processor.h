@@ -2,22 +2,9 @@
 #define QUERY_PROCESSOR.H
 #include <iostream>
 #include <map>
+#include <unordered_map>
 #include <string>
 using namespace std;
-
-class DatabaseAccounts{
-    public:
-        bool isUser;
-        std::map<std::string, std::string> accountRecords;
-
-        bool createAccount(std::string username, std::string password);
-
-        bool loginAccount(std::string username, std::string password);
-
-        bool deleteAccount(std::string username, std::string password);
-
-        bool checkAccount(std::string username);
-};
 
 class QueryProcessor {
     public:
@@ -30,6 +17,10 @@ class QueryProcessor {
     private:
         std::map<std::string, int> token_map;
 };
+
+enum class SQLType;
+
+std::unordered_map<std::string, SQLType> typeSystemCatalog;
 
 
 #endif

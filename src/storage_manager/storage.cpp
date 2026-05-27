@@ -2,6 +2,7 @@
 #include <fstream>
 #include <assert.h>
 #include <table_management.h>
+#include <data_type_template.h>
 #include <map>
 #include <filesystem>
 #include <string>
@@ -71,35 +72,4 @@ bool selectFile(std::string directory_name, std::string file_name) {
     }
 }
 
-// so what even are the other two selects for..
-bool writeFile(std::string directory_name, std::string file_name, uint32_t data = 0) {
-    std::fstream file;
-
-    assert(!std::filesystem::exists(directory_name + "/" + file_name));
-
-    file.open(directory_name + "/" + file_name, std::ios::out);
-
-    if (file.is_open()) {
-        std::string file_inputs;
-        int character_size = 0;
-
-        // IF user has to put something like entering the table data?
-        std::cin >> file_inputs;
-
-        // If program dictates to write something
-        if (data != 0) {
-            file << data;
-            return true;
-        }
-
-        // But if user has put something, like the bytes
-        for (int character = 0; character < file_inputs.length(); character++) {
-            for (char character : file_inputs) {
-                file << character;
-            }
-        }
-
-        return true;
-    }
-}
 

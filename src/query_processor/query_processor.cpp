@@ -2,53 +2,88 @@
 #include <map>
 #include <string>
 #include "storage.h"
+#include <unordered_map>
 using namespace std;
 
+// QUEUE
 
-class databaseAccounts {
+struct queueNode {
+    std::string user;
+    std::string query;
+};
+
+
+class Queue {
+    private:
+        int head = 0;
+        int tail = 0;
+        static const int MAX_SIZE = 5; 
+        queueNode Q[MAX_SIZE];
+        int count = 0;
+        
     public:
-        bool isUser;
-        std::map<std::string, std::string> accountRecords;
-
-        bool createAccount(std::string username, std::string password) {
-            accountRecords.insert({username, password});
-            std::cout << "Account successfully created, you may now login.";
-            std::cout << "Account made at date, also the recorded info creation is in database in case of retrieving account again.";
+        bool Enqueue(queueNode &el) {
+            if (count == 5) {
+            std::cout << "Queue is full at the moment, please wait."; 
+            return false;
+            }
+            this->Q[tail] = el;
+            this->tail = (tail + 1) % MAX_SIZE;  
+            count += 1;
+            return true;
         }
 
-        bool loginAccount(std::string username, std::string password) {
-            if (username == accountRecords[username] && password == accountRecords[password]) {
-                std::cout << "Account successfully logged in.";
+        bool Dequeue() {
+        if (this->count == 0) {
+            return false;
+        }
+
+        else if (this->count > 1) {
+                this->head = (head + 1) % MAX_SIZE;
+                count = count - 1;
+            }
+            return true;
+        }
+
+        queueNode Front() {
+            if (count == 0) {
+                throw std::runtime_error("Queue is empty, no front element!");
+            }
+            return Q[head];
+        }
+
+        queueNode Back() {
+            if (count == 0) {
+                throw std::runtime_error("Queue is empty, no back element!");
+            }
+            return Q[tail];
+        }
+
+        bool isEmpty() {
+            if (count == 0) {
                 return true;
             }
-        }
-
-        bool deleteAccount(std::string username, std::string password) {
-            bool userChoice = false;
-
-            if (username == accountRecords[username] && password == accountRecords[password]) {
-                std::cout << "Account found, beginning deletion.";
-
-                while (userChoice == false) {
-                    std::cout << "Are you sure you would like to delete?";
-                    std::cin >> userChoice;
-
-                    if (userChoice == true) {
-                        accountRecords.clear({username, password});
-                        break;
-                    }
-                    else (userChoice == false);
-                }
-            }
-        }
-
-        bool checkAccount(std::string username) {
-            if (username == accountRecords[username]) {
-                return true;
+            else {
+                return false;
             }
         }
 };
 
+// HASH MAP
+enum class SQLType {
+    INTEGER,
+    BOOLEAN,
+    VARCHAR
+};
+
+std::unordered_map<std::string, SQLType> typeSystemCatalog = {
+    {"INT", SQLType::INTEGER},
+    {"INTEGER", SQLType::INTEGER},
+    {"BOOL", SQLType::BOOLEAN},
+    {"BOOLEAN", SQLType::BOOLEAN}
+};
+
+//I shouldn't use query processor through class? for a db engine
 class queryProcessor {
     private:
         std::map<std::string, int> token_map = {
