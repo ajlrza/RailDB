@@ -8,6 +8,21 @@
 #include <string>
 using namespace std;
 
+// Storage communication
+
+enum class DBMSFormat {
+    RAILDB_BINARY, // Custom binary format for your DB tables
+    TEXT_DUMP,     // For exporting data as text (.txt)
+    CSV_EXPORT,    // For exporting data as spreadsheets (.csv)
+    JSON_EXPORT    // For web/API compatibility (.json)
+};
+
+struct FileCreationConfig {
+    std::string fileName;
+    std::string directoryPath;
+    DBMSFormat chosenFormat; // Dictates how the file is built
+};
+
 // Disk storage manager
 
 
@@ -19,18 +34,11 @@ bool createDirectory(std::string directory_name) {
 
 }
 
-std::string createFile(table &table_name, std::string schema_name, std::string file_name, std::string mode) {
 
-    if (mode == "Initialization") {
-        std::string data;
-        return data;
-    }
+// is it better to generalize or not to generalize?
+std::string createFile(const FileCreationConfig& config) {
 
-    if (mode == "Creation") {
-        std::ofstream file(schema_name + "/" + file_name);
-        file.close();
-        return "Created successfully";
-    }
+
     
 }
 

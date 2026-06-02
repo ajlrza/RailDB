@@ -118,6 +118,7 @@ struct table {
     std::vector<std::any> Table;
     bool tableCreated = false;
     int size = Table.size();
+    std::string default = "Default";
 };
 // will fix them soon^
 
@@ -202,44 +203,44 @@ class BoolDataType: public DataType {
     };
 };
 
+struct Schema {
+    std::string Schema_name;
+    table Table;
+    uint32_t Views;
+    uint32_t Stored_procedures;
+};
+
 class SchemaCreator {
     public:
-        SchemaCreator(uint32_t schema_name);
+        SchemaCreator(std::string schema_name);
+        Schema schema;
 
         void setStruct() {
-            uint32_t schema_name = schema_name;
-            this->schema.schema_name = schema_name;
+            std::string schema_name = schema_name;
+            this->schema.Schema_name = schema_name;
         };
 
         void setTable(table Table) {
             table Table = Table;
-            this->schema.table = Table;
+            this->schema.Table = Table;
         };
 
         void setViews(uint32_t views) {
             uint32_t views = views;
-            this->schema.views = views;
+            this->schema.Views = views;
         }
 
         void setStoredP(uint32_t stored_procedures) {
             uint32_t stored_procedures = stored_procedures;
-            this->schema.stored_procedures = stored_procedures;
+            this->schema.Stored_procedures = stored_procedures;
         }
 
         bool storeSchema() {
-            if (createDirectory())
+            if (createDirectory(this->schema.Schema_name)) {
+                return true;
+            }
         }
 
-    private:
-        // views, table, stored procedures
-        struct Schema {
-            uint32_t schema_name;
-            //need this one to be a struct or class for a data structure
-            table table;
-            uint32_t views;
-            uint32_t stored_procedures;
-        };
-        Schema schema;
 };
 
 int randomIDAssigner() {
@@ -255,7 +256,7 @@ int randomIDAssigner() {
 };
 
 // In creating a directory, maybe it would be automatic or user generated?
-void createTable(std::string name, std::string directory_name) {
+void createTable(std::string schema_name, std::string name, std::string directory_name) {
     // assign metadata
     int tableID = randomIDAssigner();
     // Only 1kb worth of table name?
@@ -280,10 +281,10 @@ void createTable(std::string name, std::string directory_name) {
     Table.tableName = nameBlock;
 
     // Create the table in the storage disk
-    createFile(directory_name, Table.tableName, "Creation");
+    createFile(directory_name, Table.tableName, "Creation", ".txt");
 
     // Write to file the metadata
-
+    writeFile(schema_name, Table.tableName, Table.tableID);
 
 };
 

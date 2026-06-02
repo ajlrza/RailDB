@@ -10,7 +10,7 @@ using namespace std;
 
 bool createDirectory(std::string directory_name);
 
-std::string createFile(std::string directory_name, std::string file_name, std::string mode);
+std::string createFile(std::string directory_name, std::string file_name, std::string mode, std::string format);
 
 bool selectDirectory(std::string directory_name);
 
@@ -18,7 +18,7 @@ bool selectFile(std::string directory_name, std::string file_name);
 
 // Template to write generalized structs to a file (e.g row struct, col struct, table struct)
 template <typename W>
-void writeFile(std::string directory_name, std::string file_name, const W& data) {
+void writeFile(std::string directory_name, std::string file_name, const W& data = 0) {
     std::fstream file;
     assert(!std::filesystem::exists(directory_name + "/" + file_name));
 

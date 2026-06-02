@@ -8,7 +8,11 @@
 #include <string>
 using namespace std;
 
-struct table;
+struct table {
+    bool tableCreated = false;
+    int size = 0;
+};
+
 struct rowData;
 struct colData;
 
@@ -68,10 +72,8 @@ class SchemaCreator {
 
 int randomIDAssigner();
 
-// In creating a directory, maybe it would be automatic or user generated?
 void createTable(std::string name, std::string directory_name);
 
-// Oh yeah THE DIRECTORY itself should be the schema(?)
 void addCol(std::string schema_name, std::string table_name, std::string col_name, std::string data_type);
 
 #endif

@@ -103,13 +103,6 @@ class queryProcessor {
                 for (char character : query) {
 
                     if (character == '1') {
-                        std::cout << "Preparing to add a data..";
-                        std::string createdTheFile;
-                        createdTheFile = createFile(query, "Initialization");
-                        std::cout << "Adding the data..";
-                    }
-
-                    if (character == '2') {
                         std::cout << "Locating directory, if not exists, will be created..";
 
                         if (!selectDirectory("Directory" + query)) {
