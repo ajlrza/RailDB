@@ -8,14 +8,8 @@ using namespace std;
 
 class QueryProcessor {
     public:
-        bool querySession;
+        bool startQuerying(std::string user, std::string userQuery);
 
-        bool checkIfQuerying();
-
-        bool startQuerying(std::string user, std::string query);
-
-    private:
-        std::map<std::string, int> token_map;
 };
 
 enum class SQLType;

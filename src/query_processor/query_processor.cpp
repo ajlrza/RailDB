@@ -12,6 +12,45 @@ struct queueNode {
     std::string query;
 };
 
+struct queryClasses {
+    queryLexer lexicalAnalyze;
+    queryParser lexicalParse;
+    queryOptimizer lexicalOptimizing;
+    queryExecutor lexicalExecutor;
+};
+
+enum class SQLType {
+    INTEGER,
+    BOOLEAN,
+    VARCHAR,
+};
+
+enum class TokenType {
+    ADD,
+    INTO,
+    GET,
+    FROM,
+    REMOVE,
+    TABLE,
+    COLUMN,
+};
+
+std::unordered_map<std::string, SQLType> typeSystemCatalog = {
+    {"INT", SQLType::INTEGER},
+    {"INTEGER", SQLType::INTEGER},
+    {"BOOL", SQLType::BOOLEAN},
+    {"BOOLEAN", SQLType::BOOLEAN}
+};
+
+std::unordered_map<std::string, TokenType> tokenTypeCatalog = {
+    {"ADD", TokenType::ADD},
+    {"INTO", TokenType::INTO},
+    {"GET", TokenType::GET},
+    {"FROM", TokenType::FROM},
+    {"REMOVE", TokenType::REMOVE},
+    {"TABLE", TokenType::TABLE},
+    {"COLUMN", TokenType::COLUMN}
+};
 
 class Queue {
     private:
@@ -69,96 +108,72 @@ class Queue {
         }
 };
 
-// HASH MAP
-enum class SQLType {
-    INTEGER,
-    BOOLEAN,
-    VARCHAR,
-};
+queryClasses queryPipeline;
 
-std::unordered_map<std::string, SQLType> typeSystemCatalog = {
-    {"INT", SQLType::INTEGER},
-    {"INTEGER", SQLType::INTEGER},
-    {"BOOL", SQLType::BOOLEAN},
-    {"BOOLEAN", SQLType::BOOLEAN}
-};
-
-enum class TokenType {
-    ADD,
-    INTO,
-    GET,
-    FROM,
-    REMOVE,
-    TABLE,
-    COLUMN,
-};
-
-std::unordered_map<std::string, TokenType> tokenTypeCatalog = {
-    {"ADD", TokenType::ADD},
-    {"INTO", TokenType::INTO},
-    {"GET", TokenType::GET},
-    {"FROM", TokenType::FROM},
-    {"REMOVE", TokenType::REMOVE},
-    {"TABLE", TokenType::TABLE},
-    {"COLUMN", TokenType::COLUMN}
-};
-
-//I shouldn't use query processor through class? for a db engine
+//I shouldn't use query processor through class? for a db engine, ormaybe we can, long as its not for operational CPU
 class queryProcessor {
     public:    
         bool startQuerying(std::string user, std::string userQuery) {
-            int character_size = 0;
-            char* characters = new char[character_size];
+ 
+        }
+};
 
-            for (char character : userQuery) {
-                if (character == ' ') {
-                    continue;
-                }
-
-                if (character == '1') {
-                    std::cout << "Locating directory, if not exists, will be created..";
-
-                    if (!selectDirectory("Directory" + query)) {
-                        std::cout << "Directory does not exist, will create..";
-
-                        if (createDirectory("Directory/" + query)) {
-                            std::cout << "Directory successfully created..";
-                        }
-
-                    }
-                }
-            }     
-        };
-
+class queryLexer {
+    public:
         bool lexicalAnalysis(std::string userQuery) {
-             // Need an algorithm to extract tokens
-             int charIndex = 0;
-             int wordStart = 0;
-             std::string extractedToken = "";
+                // Need an algorithm to extract tokens
+                int charIndex = 0;
+                int wordStart = 0;
+                std::string extractedToken = "";
 
-             for (char character : userQuery) {
-                
-                if (charIndex == userQuery.length()) {
-                    break;
-                }
-
-                // Refactor soon, for now make it work
-                if (userQuery[charIndex] == ' ') {
-                    extractedToken = userQuery.substr(wordStart, charIndex - wordStart);
-                    if (extractedToken == "") {
-                        wordStart = charIndex + 1;
-                        charIndex += 1;
-                        continue;
+                for (char character : userQuery) {
+                    
+                    if (charIndex == userQuery.length()) {
+                        break;
                     }
-                    TokenType token = tokenTypeCatalog.at(extractedToken);
-                    wordStart = charIndex + 1;
-                } 
-                else if (charIndex + 1 == userQuery.length() || extractedToken != "" && charIndex + 1 == userQuery.length()) {
-                    extractedToken = userQuery.substr(wordStart, charIndex - wordStart + 1); 
-                    TokenType token = tokenTypeCatalog.at(extractedToken);
-                }
-                charIndex += 1;
-             }
 
-        };
-    };
+                    // Refactor soon, for now make it work
+                    if (userQuery[charIndex] == ' ') {
+                        extractedToken = userQuery.substr(wordStart, charIndex - wordStart);
+                        if (extractedToken == "") {
+                            wordStart = charIndex + 1;
+                            charIndex += 1;
+                            continue;
+                        }
+                        bool parseToken = queryPipeline.lexicalAnalyze(extractedToken);
+                        if (parseToken == true) {
+                            wordStart = charIndex + 1;
+                        }
+                    } 
+                    else if (charIndex + 1 == userQuery.length() || extractedToken != "" && charIndex + 1 == userQuery.length()) {
+                        extractedToken = userQuery.substr(wordStart, charIndex - wordStart + 1); 
+                        TokenType token = tokenTypeCatalog.at(extractedToken);
+                    }
+                    charIndex += 1;
+                }
+
+            };
+};
+
+class queryParser {
+    public:
+        bool lexicalParsing(std::string token) {
+            try {
+                TokenType parsedToken = tokenTypeCatalog.at(token);
+                return true;
+            } 
+            catch(const std::out_of_range &e) {
+                return false;
+            }
+        }
+};
+
+class queryOptimizer {
+    public:
+
+};
+
+class queryExecutor {
+    public:
+
+};
