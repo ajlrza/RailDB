@@ -51,10 +51,14 @@ int main() {
             }
 
             QueryProcessor queryProcessor;
+            std::string queryInput;
 
             std::cout << "Enter your queryL:\n";
             std::cout << userQueryChoices;
-            std::cin >> queryProcessor.startQuerying
+            std::cin >> queryInput;
+            bool queryAction = queryProcessor.startQuerying("Test", queryInput);
+            
+
             
         }
     }
