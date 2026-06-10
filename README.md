@@ -126,10 +126,3 @@ qp.startQuerying("user1", "SELECT * FROM tables");
 - 🔄 Query optimization engine (planned)
 - 🔄 Distributed query support (planned)
 
-## License
-
-MIT License
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit pull requests or open issues.
