@@ -9,7 +9,6 @@ using namespace std;
 class QueryProcessor {
     public:
         bool startQuerying(std::string user, std::string userQuery);
-
 };
 
 enum class SQLType;

@@ -17,6 +17,7 @@ struct queryClasses {
     queryParser lexicalParse;
     queryOptimizer lexicalOptimizing;
     queryExecutor lexicalExecutor;
+    queryProcess queryProcessor;
 };
 
 enum class SQLType {
@@ -56,18 +57,23 @@ class Queue {
     private:
         int head = 0;
         int tail = 0;
-        static const int MAX_SIZE = 5; 
-        queueNode Q[MAX_SIZE];
+        static const int max_size = 5; 
+        queueNode queue_array[max_size];
         int count = 0;
+
+        queueNode passNode(int head) {
+            this->current_node = queue_array[head];
+        }
         
     public:
+        queueNode current_node;
         bool Enqueue(queueNode &el) {
             if (count == 5) {
             std::cout << "Queue is full at the moment, please wait."; 
             return false;
             }
-            this->Q[tail] = el;
-            this->tail = (tail + 1) % MAX_SIZE;  
+            this->queue_array[tail] = el;
+            this->tail = (tail + 1) % max_size;  
             count += 1;
             return true;
         }
@@ -78,8 +84,9 @@ class Queue {
         }
 
         else if (this->count > 1) {
-                this->head = (head + 1) % MAX_SIZE;
+                this->head = (head + 1) % max_size;
                 count = count - 1;
+                passNode(this->head);
             }
             return true;
         }
@@ -88,14 +95,14 @@ class Queue {
             if (count == 0) {
                 throw std::runtime_error("Queue is empty, no front element!");
             }
-            return Q[head];
+            return queue_array[head];
         }
 
         queueNode Back() {
             if (count == 0) {
                 throw std::runtime_error("Queue is empty, no back element!");
             }
-            return Q[tail];
+            return queue_array[tail];
         }
 
         bool isEmpty() {
@@ -111,10 +118,15 @@ class Queue {
 queryClasses queryPipeline;
 
 //I shouldn't use query processor through class? for a db engine, ormaybe we can, long as its not for operational CPU
-class queryProcessor {
-    public:    
+class queryProcess {
+    public: 
         bool startQuerying(std::string user, std::string userQuery) {
- 
+            queueNode Node;
+            Node.user = user;
+            Node.query = userQuery;
+            Queue queue;
+            queue.Enqueue(Node);
+            queue.Dequeue();
         }
 };
 
@@ -175,5 +187,17 @@ class queryOptimizer {
 
 class queryExecutor {
     public:
+        queueNode current_node;
+        queryLexer query_lex;
 
+        queryExecutor(queueNode node) {
+            this->current_node = node;
+            executeQuery();
+        }
+
+        std::string executeQuery() {
+            bool analyze_query = query_lex.lexicalAnalysis(this->current_node.query);
+            assert(analyze_query == true);
+            // Need a tree soon, to actually execute query?
+        }
 };
