@@ -68,13 +68,13 @@ class Queue {
     public:
         queueNode current_node;
         bool Enqueue(queueNode &el) {
-            if (count == 5) {
+            if (this->count == 5) {
             std::cout << "Queue is full at the moment, please wait."; 
             return false;
             }
             this->queue_array[tail] = el;
             this->tail = (tail + 1) % max_size;  
-            count += 1;
+            this->count += 1;
             return true;
         }
 
@@ -85,28 +85,28 @@ class Queue {
 
         else if (this->count > 1) {
                 this->head = (head + 1) % max_size;
-                count = count - 1;
+                this->count = count - 1;
                 passNode(this->head);
             }
             return true;
         }
 
         queueNode Front() {
-            if (count == 0) {
+            if (this->count == 0) {
                 throw std::runtime_error("Queue is empty, no front element!");
             }
-            return queue_array[head];
+            return this->queue_array[head];
         }
 
         queueNode Back() {
-            if (count == 0) {
+            if (this->count == 0) {
                 throw std::runtime_error("Queue is empty, no back element!");
             }
-            return queue_array[tail];
+            return this->queue_array[tail];
         }
 
         bool isEmpty() {
-            if (count == 0) {
+            if (this->count == 0) {
                 return true;
             }
             else {
@@ -114,6 +114,92 @@ class Queue {
             }
         }
 };
+
+struct SyntaxNode {
+    TokenType Token;
+    int LeftChild;
+    int RightChild;
+    int RootChild;
+}
+
+struct EvictedSubtree {
+    TokenType PreviousToken;
+    TokenType RightChild;
+    TokenType RootChild;
+    TokenType LeftChild;
+}
+
+class BufferedLCRSTree {
+    private:
+        static const int max_size = 5; 
+        SyntaxNode node_buffer[max_size];  
+        EvictedSubtree PreviousSubtree;
+        int Right = 0; 
+        int Left = 0;  
+
+    public:
+
+    TokenType get_token_at_index(int index) {
+            if (index < 0 || index >= max_size) return TOKEN_NONE;
+            return node_buffer[index].Token;
+        }
+
+        void add_child(SyntaxNode &Node) {
+            if (this->count == this->max_size) {
+                
+                    int eviction_target = this->Left;
+                    
+                    this->PreviousSubtree.PreviousToken = this->node_buffer[eviction_target].Token;
+                    
+                    int left_child_idx = this->node_buffer[eviction_target].LeftChildIndex;
+                    int right_child_idx = this->node_buffer[eviction_target].RightChildIndex;
+                    
+                    this->PreviousSubtree.LeftChild = (left_child_idx != -1) ? this->node_buffer[left_child_idx].Token : TOKEN_NONE;
+                    this->PreviousSubtree.RightChild = (right_child_idx != -1) ? this->node_buffer[right_child_idx].Token : TOKEN_NONE;
+
+                    this->PreviousSubtree.RootChild = find_parent_token_of(eviction_target);
+
+                    this->emit_evicted_subtree(this->PreviousSubtree);
+
+                    this->Left = (this->Left + 1) % this->max_size;
+                    this->count -= 1;
+                }
+
+                this->node_buffer[this->Right] = Node;
+                this->Right = (this->Right + 1) % this->max_size;
+                this->count += 1;
+                
+                return true;
+        }
+    
+        void get_child(int child_number) {
+
+            int current_target_idx = (this->Right + child_number) % this->max_size;
+        
+            int next_node_idx = (this->Right + child_number + 1) % this->max_size;
+
+            this->PreviousSubtree.PreviousToken = node_buffer[current_target_idx].Token;
+
+            int right_idx = node_buffer[current_target_idx].RightChildIndex;
+            this->PreviousSubtree.RightChild = get_token_at_index(right_idx);
+
+            int left_idx = node_buffer[current_target_idx].LeftChildIndex;
+            this->PreviousSubtree.LeftChild = get_token_at_index(left_idx);
+
+            this->PreviousSubtree.RootChild = node_buffer[next_node_idx].Token;
+
+            this->Left = (this->Left + 1) % this->max_size;
+            this->count = this->count - 1;
+
+            return node_buffer[current_target_idx].Token;
+        }
+
+        bool collapse_tree() {
+            for (this->count; this->count <= max_size; count--) {
+                this->node_buffer[this->count] = node_buffer[this->count - 1];
+            }
+        }
+}
 
 queryClasses queryPipeline;
 
@@ -199,5 +285,6 @@ class queryExecutor {
             bool analyze_query = query_lex.lexicalAnalysis(this->current_node.query);
             assert(analyze_query == true);
             // Need a tree soon, to actually execute query?
+
         }
 };
