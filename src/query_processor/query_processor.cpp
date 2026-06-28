@@ -1,8 +1,8 @@
 #include <iostream>
 #include <map>
 #include <string>
-#include "storage.h"
 #include <unordered_map>
+#include <filesystem>
 using namespace std;
 
 // QUEUE
@@ -120,16 +120,22 @@ struct SyntaxNode {
     int LeftChild;
     int RightChild;
     int RootChild;
-}
+};
 
 struct EvictedSubtree {
     TokenType PreviousToken;
     TokenType RightChild;
     TokenType RootChild;
     TokenType LeftChild;
-}
+};
 
-class BufferedLCRSTree {
+// Stop removing rootchild, get previous subtrees properly
+
+class StandardAST {
+
+};
+
+class StreamingAST {
     private:
         static const int max_size = 5; 
         SyntaxNode node_buffer[max_size];  
@@ -199,6 +205,33 @@ class BufferedLCRSTree {
                 this->node_buffer[this->count] = node_buffer[this->count - 1];
             }
         }
+};
+
+struct ASTCatalog {
+    StandardAST standardAST,
+    StreamingAST streamingAST,
+};
+
+ASTCatalog ASTRouter(DBMSFormat file) {
+    ASTCatalog catalog;
+    ASTCatalog* catalogPtr = &catalog; 
+    std::uintmax_t bytes = std::filesystem::file_size(file);
+
+    if (catalogPtr->standardAST.isBuffering) {
+        catalogPtr->streamingAST = catalogPtr->streamingAST.switch(catalogPtr->standardAST.activeTree);
+    } 
+    else if (catalogPtr->streamingAST.isBuffering) {
+        catalogPtr->standardAST = catalogPtr->standardAST.switch(catalogPtr->streamingAST.activeTree);
+    }
+
+    if (bytes <= 1288) {
+        catalogPtr->standardAST = catalogPtr->standardAST.init(file);
+    } 
+    else {
+        catalogPtr->streamingAST = catalogPtr->streamingAST.init(file);
+    }
+    
+    return catalog;
 }
 
 queryClasses queryPipeline;
