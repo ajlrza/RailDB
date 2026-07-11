@@ -48,4 +48,6 @@ void writeFile(std::string directory_name, std::string file_name, const W& data 
     }
 }
 
+enum class DBMSFormat;
+
 #endif

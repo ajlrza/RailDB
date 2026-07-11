@@ -1,7 +1,6 @@
 #include <iostream>
 #include <map>
 #include <string>
-#include "storage.h"
 #include <unordered_map>
 using namespace std;
 
@@ -120,16 +119,22 @@ struct SyntaxNode {
     int LeftChild;
     int RightChild;
     int RootChild;
-}
+};
 
 struct EvictedSubtree {
     TokenType PreviousToken;
     TokenType RightChild;
     TokenType RootChild;
     TokenType LeftChild;
-}
+};
 
-class BufferedLCRSTree {
+// Stop removing rootchild, get previous subtrees properly
+
+class StandardAST {
+
+};
+
+class StreamingAST {
     private:
         static const int max_size = 5; 
         SyntaxNode node_buffer[max_size];  
@@ -199,6 +204,28 @@ class BufferedLCRSTree {
                 this->node_buffer[this->count] = node_buffer[this->count - 1];
             }
         }
+};
+
+struct ASTCatalog {
+    StandardAST standardAST,
+    StreamingAST streamingAST,
+};
+
+ASTCatalog ASTRouter(DBMSFormat file) {
+    ASTCatalog catalog;
+    ASTCatalog* catalogPtr = &catalog;
+
+    if (catalog.standardAST.isBuffering) {
+        StandardAST myStandard = catalogPtr->standardAST;
+        StreamingAST myStreaming = catalogPtr->streamingAST();
+    }
+
+    if (file.size() < 1288) {
+        StandardAST myStandard = catalog.standardAST.init(file);
+    } 
+    else if (file.size() > 1288) {
+        StreamingAST myStreaming = catalog.streamingAST.init(file);
+    }
 }
 
 queryClasses queryPipeline;

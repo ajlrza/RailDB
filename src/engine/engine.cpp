@@ -58,7 +58,6 @@ int main() {
             std::cin >> queryInput;
             bool queryAction = queryProcessor.startQuerying("Test", queryInput);
             
-
             
         }
     }
