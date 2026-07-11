@@ -1,0 +1,8 @@
+add_subdirectory(engine)
+add_subdirectory(memory_manager)
+add_subdirectory(query_planner)
+add_subdirectory(query_processor)
+add_subdirectory(storage_manager)
+add_subdirectory(table_management)
+add_subdirectory(templates)
+add_subdirectory(transaction_manager)

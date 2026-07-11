@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 #include <unordered_map>
+#include <filesystem>
 using namespace std;
 
 // QUEUE
@@ -120,12 +121,22 @@ struct SyntaxNode {
     int RightChild;
     int RootChild;
 };
+};
 
 struct EvictedSubtree {
     TokenType PreviousToken;
     TokenType RightChild;
     TokenType RootChild;
     TokenType LeftChild;
+};
+
+// Stop removing rootchild, get previous subtrees properly
+
+class StandardAST {
+
+};
+
+class StreamingAST {
 };
 
 // Stop removing rootchild, get previous subtrees properly
