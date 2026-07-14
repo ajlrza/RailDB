@@ -11,9 +11,9 @@ using namespace std;
 // RAM management
 // SOON
 
-class memoryCreator: public std::pmr::memory_resource {
+class MemoryCreator: public std::pmr::memory_resource {
     
-    memoryCreator() {
+    MemoryCreator() {
 
     }
     
@@ -27,14 +27,14 @@ class memoryCreator: public std::pmr::memory_resource {
 
 };
 
-class memoryAllocator {
+class MemoryAllocator {
     private:
 
     public:
 
 };
 
-class memoryDeleter {
+class MemoryDeleter {
     private:
 
     public:
