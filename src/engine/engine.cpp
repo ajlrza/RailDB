@@ -6,12 +6,12 @@
 #include <iostream>
 
 int main() {
-    bool clientSession = false;
-    bool serverSession = true;
+    bool client_session = false;
+    bool server_session = true;
 
-    while (serverSession == true) {
+    while (server_session == true) {
         
-        std::map<std::string, int> userQuery = {
+        std::map<std::string, int> user_query = {
         {"ADD", 1},
         {"INTO", 2},
         {"SELECT", 3},
@@ -19,18 +19,18 @@ int main() {
         {"REMOVE", 5},
     };
 
-        std::string userQueryChoices = 
+        std::string user_query_choices = 
                                     "[1] - Insert Data "
                                     "[2] - Select Data "
                                     "[3] - From Table "
                                     "[4] - Remove Data/Table ";                
 
         std::cout << "Would you like to query? please answer true or false only.";
-        std::cin >> clientSession;
+        std::cin >> client_session;
 
-        while (clientSession == true) {
+        while (client_session == true) {
             QueryProcessor();
-            DatabaseAccounts userSession;
+            DatabaseAccounts user_session;
 
             std::cout << "Please login";
             
@@ -42,7 +42,7 @@ int main() {
             std::string password;
             std::cin >> password;
 
-            if (userSession.loginAccount(username, password) == false) {
+            if (user_session.login_account(username, password) == false) {
                 std::cout << "Log-in failed, incorrect username or password";
                 break;
                 
@@ -50,13 +50,13 @@ int main() {
                 std::cout << "Account successfully logged in.";
             }
 
-            QueryProcessor queryProcessor;
-            std::string queryInput;
+            QueryProcessor query_processor;
+            std::string query_input;
 
             std::cout << "Enter your queryL:\n";
-            std::cout << userQueryChoices;
-            std::cin >> queryInput;
-            bool queryAction = queryProcessor.startQuerying("Test", queryInput);
+            std::cout << user_query_choices;
+            std::cin >> query_input;
+            bool query_action = query_processor.start_querying("Test", query_input);
             
             
         }
