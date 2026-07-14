@@ -7,17 +7,17 @@ using namespace std;
 
 // QUEUE
 
-struct queueNode {
+struct QueueNode {
     std::string user;
     std::string query;
 };
 
-struct queryClasses {
-    queryLexer lexicalAnalyze;
-    queryParser lexicalParse;
-    queryOptimizer lexicalOptimizing;
-    queryExecutor lexicalExecutor;
-    queryProcess queryProcessor;
+struct QueryClasses {
+    QueryLexer lexical_analyzer;
+    QueryParser lexical_parser;
+    QueryOptimizer lexical_optimzer;
+    QueryExecutor lexical_executor;
+    QueryProcess query_processor;
 };
 
 enum class SQLType {
@@ -36,14 +36,14 @@ enum class TokenType {
     COLUMN,
 };
 
-std::unordered_map<std::string, SQLType> typeSystemCatalog = {
+std::unordered_map<std::string, SQLType> type_system_catalog = {
     {"INT", SQLType::INTEGER},
     {"INTEGER", SQLType::INTEGER},
     {"BOOL", SQLType::BOOLEAN},
     {"BOOLEAN", SQLType::BOOLEAN}
 };
 
-std::unordered_map<std::string, TokenType> tokenTypeCatalog = {
+std::unordered_map<std::string, TokenType> token_type_catalog = {
     {"ADD", TokenType::ADD},
     {"INTO", TokenType::INTO},
     {"GET", TokenType::GET},
@@ -61,13 +61,13 @@ class Queue {
         queueNode queue_array[max_size];
         int count = 0;
 
-        queueNode passNode(int head) {
+        QueueNode pass_node(int head) {
             this->current_node = queue_array[head];
         }
         
     public:
-        queueNode current_node;
-        bool Enqueue(queueNode &el) {
+        QueueNode current_node;
+        bool Enqueue(QueueNode &el) {
             if (this->count == 5) {
             std::cout << "Queue is full at the moment, please wait."; 
             return false;
@@ -91,21 +91,21 @@ class Queue {
             return true;
         }
 
-        queueNode Front() {
+        QueueNode Front() {
             if (this->count == 0) {
                 throw std::runtime_error("Queue is empty, no front element!");
             }
             return this->queue_array[head];
         }
 
-        queueNode Back() {
+        QueueNode Back() {
             if (this->count == 0) {
                 throw std::runtime_error("Queue is empty, no back element!");
             }
             return this->queue_array[tail];
         }
 
-        bool isEmpty() {
+        bool is_empty() {
             if (this->count == 0) {
                 return true;
             }
@@ -149,7 +149,7 @@ class StreamingAST {
     private:
         static const int max_size = 5; 
         SyntaxNode node_buffer[max_size];  
-        EvictedSubtree PreviousSubtree;
+        EvictedSubtree previous_subtree;
         int Right = 0; 
         int Left = 0;  
 
@@ -218,84 +218,84 @@ class StreamingAST {
 };
 
 struct ASTCatalog {
-    StandardAST standardAST,
-    StreamingAST streamingAST,
+    StandardAST standard_ast,
+    StreamingAST streaming_ast,
 };
 
 ASTCatalog ASTRouter(DBMSFormat file) {
     ASTCatalog catalog;
-    ASTCatalog* catalogPtr = &catalog;
+    ASTCatalog* catalog_ptr = &catalog;
 
-    if (catalog.standardAST.isBuffering) {
-        StandardAST myStandard = catalogPtr->standardAST;
-        StreamingAST myStreaming = catalogPtr->streamingAST();
+    if (catalog.standard_ast.is_buffering) {
+        StandardAST my_standard = catalogPtr->standard_ast;
+        StreamingAST my_streaming = catalogPtr->streaming_ast();
     }
 
     if (file.size() < 1288) {
-        StandardAST myStandard = catalog.standardAST.init(file);
+        StandardAST my_standard = catalog.standard_ast.init(file);
     } 
     else if (file.size() > 1288) {
-        StreamingAST myStreaming = catalog.streamingAST.init(file);
+        StreamingAST my_streaming = catalog.streaming_ast.init(file);
     }
 }
 
-queryClasses queryPipeline;
+QueryClasses query_pipeline;
 
 //I shouldn't use query processor through class? for a db engine, ormaybe we can, long as its not for operational CPU
-class queryProcess {
+class QueryProcess {
     public: 
-        bool startQuerying(std::string user, std::string userQuery) {
-            queueNode Node;
+        bool start_querying(std::string user, std::string user_query) {
+            QueueNode Node;
             Node.user = user;
-            Node.query = userQuery;
+            Node.query = user_query;
             Queue queue;
             queue.Enqueue(Node);
             queue.Dequeue();
         }
 };
 
-class queryLexer {
+class QueryLexer {
     public:
-        bool lexicalAnalysis(std::string userQuery) {
+        bool lexical_analysis(std::string user_query) {
                 // Need an algorithm to extract tokens
-                int charIndex = 0;
-                int wordStart = 0;
-                std::string extractedToken = "";
+                int char_idx = 0;
+                int word_start = 0;
+                std::string extracted_token = "";
 
-                for (char character : userQuery) {
+                for (char character : user_query) {
                     
-                    if (charIndex == userQuery.length()) {
+                    if (char_idx == user_query.length()) {
                         break;
                     }
 
                     // Refactor soon, for now make it work
-                    if (userQuery[charIndex] == ' ') {
-                        extractedToken = userQuery.substr(wordStart, charIndex - wordStart);
-                        if (extractedToken == "") {
-                            wordStart = charIndex + 1;
-                            charIndex += 1;
+                    if (user_query[char_idx] == ' ') {
+                        extracted_token = user_query.substr(word_start, char_idx - word_start);
+                        if (extracted_token == "") {
+                            word_start = char_idx + 1;
+                            char_idx += 1;
                             continue;
                         }
-                        bool parseToken = queryPipeline.lexicalAnalyze(extractedToken);
-                        if (parseToken == true) {
-                            wordStart = charIndex + 1;
+                        bool parse_token = query_pipeline.lexical_analyzer(extracted_token);
+                        if (parse_token == true) {
+                            word_start = char_idx + 1;
                         }
                     } 
-                    else if (charIndex + 1 == userQuery.length() || extractedToken != "" && charIndex + 1 == userQuery.length()) {
-                        extractedToken = userQuery.substr(wordStart, charIndex - wordStart + 1); 
-                        TokenType token = tokenTypeCatalog.at(extractedToken);
+                    else if (char_idd + 1 == user_query.length() || extractedToken != "" && charIndex + 1 == userQuery.length()) {
+                        extracted_token = user_query.substr(word_start, char_idx - word_start + 1); 
+                        TokenType token = token_type_catalog.at(extracted_token);
                     }
-                    charIndex += 1;
+                    char_idx += 1;
                 }
 
             };
 };
 
-class queryParser {
+class QueryParser {
     public:
-        bool lexicalParsing(std::string token) {
+        bool lexical_parsing(std::string token) {
             try {
-                TokenType parsedToken = tokenTypeCatalog.at(token);
+                TokenType parsed_token = token_type_catalog.at(token);
                 return true;
             } 
             catch(const std::out_of_range &e) {
@@ -304,23 +304,24 @@ class queryParser {
         }
 };
 
-class queryOptimizer {
+class QueryOptimizer {
     public:
-
+   // to optimize query i need to build the mathemtical model
+// with data struct and perform algos
 };
 
-class queryExecutor {
+class QueryExecutor {
     public:
-        queueNode current_node;
-        queryLexer query_lex;
+        QueueNode current_node;
+        QueryLexer query_lex;
 
-        queryExecutor(queueNode node) {
+        QueryExecutor(QueueNode node) {
             this->current_node = node;
-            executeQuery();
+            execute_query();
         }
 
-        std::string executeQuery() {
-            bool analyze_query = query_lex.lexicalAnalysis(this->current_node.query);
+        std::string execute_query() {
+            bool analyze_query = query_lex.lexical_analyzer(this->current_node.query);
             assert(analyze_query == true);
             // Need a tree soon, to actually execute query?
 
