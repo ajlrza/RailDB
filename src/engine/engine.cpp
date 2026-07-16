@@ -19,8 +19,7 @@ int main() {
         {"REMOVE", 5},
     };
 
-        std::string userQueryChoices = 
-                                    "[1] - Insert Data "
+        std::string userQueryChoices =  "[1] - Insert Data "
                                     "[2] - Select Data "
                                     "[3] - From Table "
                                     "[4] - Remove Data/Table ";                

@@ -8,3 +8,37 @@
 #include <string>
 using namespace std;
 #endif
+
+struct QueryOperation {
+
+};
+
+struct TableOperation {
+
+};
+
+struct MemoryOperation {
+
+};
+
+struct StorageOperation {
+
+};
+
+struct EngineOperation {
+
+};
+
+struct TransactionUnit {
+    int transaction_id;
+    QueryOperation Q;
+    TableOperation T;
+    MemoryOperation M;
+    StorageOperation S;
+    EngineOperation E;
+};
+
+struct Transaction {
+    TransactionUnit Units[128];
+};
+

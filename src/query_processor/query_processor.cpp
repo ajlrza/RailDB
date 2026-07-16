@@ -121,7 +121,6 @@ struct SyntaxNode {
     int RightChild;
     int RootChild;
 };
-};
 
 struct EvictedSubtree {
     TokenType PreviousToken;
