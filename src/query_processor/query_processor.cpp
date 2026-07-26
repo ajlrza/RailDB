@@ -34,6 +34,7 @@ enum class TokenType {
     REMOVE,
     TABLE,
     COLUMN,
+    NONE = true
 };
 
 std::unordered_map<std::string, SQLType> type_system_catalog = {
@@ -50,7 +51,8 @@ std::unordered_map<std::string, TokenType> token_type_catalog = {
     {"FROM", TokenType::FROM},
     {"REMOVE", TokenType::REMOVE},
     {"TABLE", TokenType::TABLE},
-    {"COLUMN", TokenType::COLUMN}
+    {"COLUMN", TokenType::COLUMN},
+    {"NONE", TokenType::NONE}
 };
 
 class Queue {
@@ -129,13 +131,9 @@ struct EvictedSubtree {
     TokenType LeftChild;
 };
 
-// Stop removing rootchild, get previous subtrees properly
 
 class StandardAST {
 
-};
-
-class StreamingAST {
 };
 
 // Stop removing rootchild, get previous subtrees properly
@@ -147,6 +145,7 @@ class StandardAST {
 class StreamingAST {
     private:
         static const int max_size = 5; 
+        int count = 0;
         SyntaxNode node_buffer[max_size];  
         EvictedSubtree previous_subtree;
         int Right = 0; 
@@ -155,7 +154,10 @@ class StreamingAST {
     public:
 
     TokenType get_token_at_index(int index) {
-            if (index < 0 || index >= max_size) return TOKEN_NONE;
+            if (index < 0 || index >= max_size) {
+                TokenType NONE = TokenType::NONE;
+                return NONE;
+            }
             return node_buffer[index].Token;
         }
 
