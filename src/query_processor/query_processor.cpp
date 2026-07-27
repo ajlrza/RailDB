@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include <filesystem>
+#include <storage.h>
 using namespace std;
 
 // QUEUE
@@ -131,81 +132,100 @@ struct EvictedSubtree {
     TokenType LeftChild;
 };
 
-
-class StandardAST {
-
-};
-
 // Stop removing rootchild, get previous subtrees properly
 
 class StandardAST {
+    private:
+        int count 0;
+        std::Vector<SyntaxNode> directed_graph;
+        std::vector<int> directed_graph_weights;
+        int total_vertices = 0;
+        int total_directed_edges = 0;
+
+    public:
+        int V() {
+            return total_vertices;
+        };
+
+        int W() {
+            return total_directed_edges;
+        };
+
+        void add_edge(int v, int w) {
+            if (directed_graph.empty()) {
+                SyntaxNode vertex;
+                vertex.RightChild = 0;
+                vertex.LeftChild = 0;
+                vertex.RootChild = 0;
+                vertex.Token = v;
+                directed_graph.push_back(vertex);
+                directed_graph_weights.push_back(w);
+            }
+        };
 
 };
 
-class StreamingAST {
+class StreamAST {
     private:
         static const int max_size = 5; 
         int count = 0;
         SyntaxNode node_buffer[max_size];  
         EvictedSubtree previous_subtree;
-        int Right = 0; 
-        int Left = 0;  
+        int right = 0; 
+        int left = 0;  
 
     public:
 
-    TokenType get_token_at_index(int index) {
-            if (index < 0 || index >= max_size) {
-                TokenType NONE = TokenType::NONE;
-                return NONE;
+        TokenType get_token_at_index(int index) {
+                if (index < 0 || index >= max_size) {
+                    return TokenType::NONE;
+                }
+                return node_buffer[index].Token;
             }
-            return node_buffer[index].Token;
-        }
 
         void add_child(SyntaxNode &Node) {
             if (this->count == this->max_size) {
                 
-                    int eviction_target = this->Left;
+                    int eviction_target = this->left;
                     
-                    this->PreviousSubtree.PreviousToken = this->node_buffer[eviction_target].Token;
+                    this->previous_subtree.PreviousToken = this->node_buffer[eviction_target].Token;
                     
-                    int left_child_idx = this->node_buffer[eviction_target].LeftChildIndex;
-                    int right_child_idx = this->node_buffer[eviction_target].RightChildIndex;
+                    int left_child_idx = this->node_buffer[eviction_target].LeftChild;
+                    int right_child_idx = this->node_buffer[eviction_target].RightChild;
                     
-                    this->PreviousSubtree.LeftChild = (left_child_idx != -1) ? this->node_buffer[left_child_idx].Token : TOKEN_NONE;
-                    this->PreviousSubtree.RightChild = (right_child_idx != -1) ? this->node_buffer[right_child_idx].Token : TOKEN_NONE;
+                    this->previous_subtree.LeftChild = (left_child_idx != -1) ? this->node_buffer[left_child_idx].Token : TokenType::NONE;
+                    this->previous_subtree.RightChild = (right_child_idx != -1) ? this->node_buffer[right_child_idx].Token : TokenType::NONE;
 
-                    this->PreviousSubtree.RootChild = find_parent_token_of(eviction_target);
+                    this->previous_subtree.RootChild = find_parent_token_of(eviction_target);
 
-                    this->emit_evicted_subtree(this->PreviousSubtree);
+                    this->emit_evicted_subtree(this->previous_subtree.);
 
-                    this->Left = (this->Left + 1) % this->max_size;
+                    this->Left = (this->left + 1) % this->max_size;
                     this->count -= 1;
                 }
 
-                this->node_buffer[this->Right] = Node;
-                this->Right = (this->Right + 1) % this->max_size;
+                this->node_buffer[this->right] = Node;
+                this->Right = (this->right + 1) % this->max_size;
                 this->count += 1;
-                
-                return true;
         }
     
-        void get_child(int child_number) {
+        TokenType get_child(int child_number) {
 
-            int current_target_idx = (this->Right + child_number) % this->max_size;
+            int current_target_idx = (this->right + child_number) % this->max_size;
         
-            int next_node_idx = (this->Right + child_number + 1) % this->max_size;
+            int next_node_idx = (this->right + child_number + 1) % this->max_size;
 
-            this->PreviousSubtree.PreviousToken = node_buffer[current_target_idx].Token;
+            this->previous_subtree.PreviousToken = node_buffer[current_target_idx].Token;
 
-            int right_idx = node_buffer[current_target_idx].RightChildIndex;
-            this->PreviousSubtree.RightChild = get_token_at_index(right_idx);
+            int right_idx = node_buffer[current_target_idx].RightChild;
+            this->previous_subtree.RightChild = get_token_at_index(right_idx);
 
-            int left_idx = node_buffer[current_target_idx].LeftChildIndex;
-            this->PreviousSubtree.LeftChild = get_token_at_index(left_idx);
+            int left_idx = node_buffer[current_target_idx].LeftChild;
+            this->previous_subtree.LeftChild = get_token_at_index(left_idx);
 
-            this->PreviousSubtree.RootChild = node_buffer[next_node_idx].Token;
+            this->previous_subtree.RootChild = node_buffer[next_node_idx].Token;
 
-            this->Left = (this->Left + 1) % this->max_size;
+            this->left = (this->left + 1) % this->max_size;
             this->count = this->count - 1;
 
             return node_buffer[current_target_idx].Token;
@@ -219,8 +239,8 @@ class StreamingAST {
 };
 
 struct ASTCatalog {
-    StandardAST standard_ast,
-    StreamingAST streaming_ast,
+    StandardAST standard_ast;
+    StreamAST stream_ast;
 };
 
 ASTCatalog ASTRouter(DBMSFormat file) {
@@ -238,7 +258,7 @@ ASTCatalog ASTRouter(DBMSFormat file) {
     else if (file.size() > 1288) {
         StreamingAST my_streaming = catalog.streaming_ast.init(file);
     }
-}
+};
 
 QueryClasses query_pipeline;
 
