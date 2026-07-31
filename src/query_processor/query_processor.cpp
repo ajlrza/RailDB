@@ -163,6 +163,12 @@ class StandardAST {
             }
         };
 
+        void remove_edge(int v, int w) {
+            if (directed_graph.empty()) {
+                std::cout << TokenType::NONE;
+            }
+        }
+
 };
 
 class StreamAST {

@@ -6,60 +6,69 @@
 #include <iostream>
 
 int main() {
+
     bool client_session = false;
     bool server_session = true;
 
     while (server_session == true) {
         
         std::map<std::string, int> user_query = {
-        {"ADD", 1},
-        {"INTO", 2},
-        {"SELECT", 3},
-        {"FROM", 4},
-        {"REMOVE", 5},
-    };
-
-        std::string user_query_choices = 
-                                    "[1] - Insert Data "
-                                    "[2] - Select Data "
-                                    "[3] - From Table "
-                                    "[4] - Remove Data/Table ";                
+            {"ADD", 1},
+            {"INTO", 2},
+            {"SELECT", 3},
+            {"FROM", 4},
+            {"REMOVE", 5},
+        };
+        
+        std::cout << "ADD\n";
+        std::cout << "INTO\n";
+        std::cout << "SELECT\n";
+        std::cout << "FROM\n";
+        std::cout << "REMOVE\n";
 
         std::cout << "Would you like to query? please answer true or false only.";
+
         std::cin >> client_session;
 
+        if (client_session == false) {
+            break;
+        }
+
         while (client_session == true) {
-            QueryProcessor();
-            DatabaseAccounts user_session;
 
-            std::cout << "Please login";
+            std::string user_menu_choice;
+
+            std::cout << "---WELCOME TO RAILDB---\n";
+            std::cout << "LOGIN OR REGISTER";
+            std::cin >> user_menu_choice;
+
+            if (user_menu_choice == "LOGIN") {
+
+                std::cout << "LOGIN\n";
+                std::cout << "Please enter your Username:\n";
+
+                //perform checks on disk
+
+            }
             
-            std::cout << "Username:\n";
-            std::string username;
-            std::cin >> username;
-
-            std::cout << "Password:\n";
-            std::string password;
-            std::cin >> password;
-
-            if (user_session.login_account(username, password) == false) {
-                std::cout << "Log-in failed, incorrect username or password";
-                break;
+            if (user_menu_choice == "REGISTER") {
                 
-            } else {
-                std::cout << "Account successfully logged in.";
+                std::cout << "REGISTER\n";
+                std::cout << "Please enter your Username:\n";
+
+                std::cout << "Username:\n";
+                std::string username;
+                std::cin >> username;
+                //perform checks on disk for similar soon
+
+                std::cout << "Password:\n";
+                std::string password;
+                std::cin >> password;
+                //perform checks on disk for similar soon
+
             }
 
-            QueryProcessor query_processor;
-            std::string query_input;
 
-            std::cout << "Enter your queryL:\n";
-            std::cout << user_query_choices;
-            std::cin >> query_input;
-            bool query_action = query_processor.start_querying("Test", query_input);
-            
-            
-        }
     }
     
 };

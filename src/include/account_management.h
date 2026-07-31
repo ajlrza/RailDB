@@ -3,14 +3,10 @@
 #include <map>
 #include <string>
 
-class DatabaseAccounts {
-    public:
-        bool isUser;
+struct account_username;
 
-        bool createAccount(std::string username, std::string password);
-        bool loginAccount(std::string username, std::string password);
-        bool deleteAccount(std::string username, std::string password);
-        bool checkAccount(std::string username);
-};
+struct account_password;
+
+struct authenticate_account;
 
 #endif
