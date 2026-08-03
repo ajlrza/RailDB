@@ -8,41 +8,90 @@
 #include <string>
 using namespace std;
 
+enum class FileErrors {
+    CREATE_DIRECTORY,
+    FILE_EXISTS
+};
+
+std::string file_operation_fallback(const char* failed_code, const char* file_name, int line_number) {
+
+    const char* failed_code_ptr = failed_code; 
+    std::string failed_code_txt;
+
+    while (*failed_code_ptr != '\0') {
+
+        failed_code_txt.push_back(*failed_code_ptr);
+        failed_code_ptr++; 
+        
+    }
+    
+    if (failed_code_txt == "CREATE_DIRECTORY") {
+        return "FileErrors::CREATE_DIRECTORY";
+    }
+    else if (failed_code_txt == "FILE_EXISTS") {
+        return "FileErrors::FILE_EXISTS";
+    };
+
+}
+
+#define assert(condition) \
+    if (!(condition)) { \
+        return file_operation_fallback(#condition, __FILE__, __LINE__); \
+    } \
+
 // Storage communication
 
 enum class DBMSFormat {
-    RAILDB_BINARY, // Custom binary format for your DB tables
+    RAILDB_BINARY, // Custom binary format for DB tables
     TEXT_DUMP,     // For exporting data as text (.txt)
     CSV_EXPORT,    // For exporting data as spreadsheets (.csv)
     JSON_EXPORT    // For web/API compatibility (.json)
 };
 
+
 struct FileCreationConfig {
-    std::string fileName;
-    std::string directoryPath;
-    DBMSFormat chosenFormat; // Dictates how the file is built
+    std::string file_name;
+    std::filesystem::path directory_path;
+    DBMSFormat chosen_format; 
 };
 
-// Disk storage manager
 
-
-bool createDirectory(std::string directory_name) {
+/**
+ * @brief Creates the directory in disk
+ * @details Uses the std::filesystem library to manipulate the creation
+ * @param directory_name Desired name in std::string data type.
+ * @return The directory file path.
+ */
+std::string create_directory(std::string directory_name) {
     
     assert(!std::filesystem::create_directory(directory_name));
+
     std::filesystem::create_directory(directory_name);
-    return true;
+
+    return "/" + directory_name;
 
 }
 
-
 // is it better to generalize or not to generalize?
-std::string createFile(const FileCreationConfig& config) {
+std::string create_file(const FileCreationConfig& config) {
 
+    std::ofstream file_creator;
 
+    if (config.chosen_format == DBMSFormat::TEXT_DUMP) {
+
+        bool check_if = std::filesystem::exists(config.file_name);
+
+        if (check_if) return;
+
+        file_creator.open(config.file_name, 3);
+
+        assert(!std::filesystem::exists(config.file_name));
+    }
     
 }
 
-bool selectDirectory(std::string directory_name) {
+std::string select_directory(std::string directory_name) {
+    
     std::fstream directory;
 
     assert(!std::filesystem::exists(directory_name));
@@ -50,18 +99,22 @@ bool selectDirectory(std::string directory_name) {
     directory.open(directory_name, std::ios::in);
 
     if (directory.is_open()) {
+
         std::string directory_items;
 
         while (std::getline(directory, directory_items)) {
             std::cout << directory_items << std::endl;
-            directory.close();
-            return true;
         }
+
+        directory.close();
+
+        return directory_items;
     }
 }
 
 // Need to determine the logic, like in here, should the function accept data/value? assuming that selectin file means writing?
-bool selectFile(std::string directory_name, std::string file_name) {
+std::string select_file(std::string directory_name, std::string file_name) {
+    
     std::fstream file;
 
     assert(!std::filesystem::exists(directory_name + "/" + file_name));
@@ -73,11 +126,11 @@ bool selectFile(std::string directory_name, std::string file_name) {
 
         while (std::getline(file, file_content)) {
             std::cout << file_content << std::endl;
-            file.close();
-            return true;
         }
+
+        file.close();
+
+        std::cout << file_content;
 
     }
 }
-
-
