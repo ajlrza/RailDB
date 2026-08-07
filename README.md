@@ -1,4 +1,4 @@
-![RailDBLogo](https://github.com/ajlrza/RailDB/blob/main/1000053226-removebg-preview.png)
+![RailDBLogo](https://github.com/ajlrza/RailDB/blob/main/RailDB.png)
 
 # RailDB
 
