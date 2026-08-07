@@ -40,7 +40,6 @@ std::string file_operation_fallback(const char* failed_code, const char* file_na
     } \
 
 // Storage communication
-
 enum class DBMSFormat {
     RAILDB_BINARY, // Custom binary format for DB tables
     TEXT_DUMP,     // For exporting data as text (.txt)
@@ -48,13 +47,11 @@ enum class DBMSFormat {
     JSON_EXPORT    // For web/API compatibility (.json)
 };
 
-
 struct FileCreationConfig {
-    std::string file_name;
+    std::filesystem::path file_name;
     std::filesystem::path directory_path;
     DBMSFormat chosen_format; 
 };
-
 
 /**
  * @brief Creates the directory in disk
@@ -73,21 +70,89 @@ std::string create_directory(std::string directory_name) {
 }
 
 // is it better to generalize or not to generalize?
-std::string create_file(const FileCreationConfig& config) {
+std::filesystem::path create_file(const FileCreationConfig& config) {
 
     std::ofstream file_creator;
 
     if (config.chosen_format == DBMSFormat::TEXT_DUMP) {
 
         bool check_if = std::filesystem::exists(config.file_name);
+        bool check_again = std::filesystem::exists(config.directory_path / config.file_name);
 
-        if (check_if) return;
+        if (check_if || check_again || check_if && check_again) return;
 
-        file_creator.open(config.file_name, 3);
+        std::filesystem::path dr = config.directory_path;
+        std::filesystem::path file = config.file_name;
 
-        assert(!std::filesystem::exists(config.file_name));
+        std::filesystem::path file_path = dr / file;
+        file_path.replace_extension(".txt");
+
+        file_creator.open(file_path, 3);
+
+        assert(!std::filesystem::exists(file_path));
+
+        return file_path;
     }
-    
+
+    if (config.chosen_format == DBMSFormat::JSON_EXPORT) {
+
+        bool check_if = std::filesystem::exists(config.file_name);
+        bool check_again = std::filesystem::exists(config.directory_path / config.file_name);
+
+        if (check_if || check_again || check_if && check_again) return;
+
+        std::filesystem::path dr = config.directory_path;
+        std::filesystem::path file = config.file_name;
+
+        std::filesystem::path file_path = dr / file;
+        file_path.replace_extension(".json");
+
+        file_creator.open(file_path, 3);
+
+        assert(!std::filesystem::exists(file_path));
+
+        return file_path;
+    }
+
+    if (config.chosen_format == DBMSFormat::CSV_EXPORT) {
+
+        bool check_if = std::filesystem::exists(config.file_name);
+        bool check_again = std::filesystem::exists(config.directory_path / config.file_name);
+
+        if (check_if || check_again || check_if && check_again) return;
+
+        std::filesystem::path dr = config.directory_path;
+        std::filesystem::path file = config.file_name;
+
+        std::filesystem::path file_path = dr / file;
+        file_path.replace_extension(".csv");
+
+        file_creator.open(file_path, 3);
+
+        assert(!std::filesystem::exists(file_path));
+
+        return file_path;
+    }
+
+    if (config.chosen_format == DBMSFormat::RAILDB_BINARY) {
+
+        bool check_if = std::filesystem::exists(config.file_name);
+        bool check_again = std::filesystem::exists(config.directory_path / config.file_name);
+
+        if (check_if || check_again || check_if && check_again) return;
+
+        std::filesystem::path dr = config.directory_path;
+        std::filesystem::path file = config.file_name;
+
+        std::filesystem::path file_path = dr / file;
+        file_path.replace_extension(".rdb");
+
+        file_creator.open(file_path, 3);
+
+        assert(!std::filesystem::exists(file_path));
+
+        return file_path;
+    }
 }
 
 std::string select_directory(std::string directory_name) {
