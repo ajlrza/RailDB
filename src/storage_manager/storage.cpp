@@ -6,6 +6,8 @@
 #include <map>
 #include <filesystem>
 #include <string>
+#include <streambuf>
+#include <fstream>
 using namespace std;
 
 enum class FileErrors {
@@ -19,10 +21,8 @@ std::string file_operation_fallback(const char* failed_code, const char* file_na
     std::string failed_code_txt;
 
     while (*failed_code_ptr != '\0') {
-
         failed_code_txt.push_back(*failed_code_ptr);
         failed_code_ptr++; 
-        
     }
     
     if (failed_code_txt == "CREATE_DIRECTORY") {
@@ -59,7 +59,7 @@ struct FileCreationConfig {
  * @param directory_name Desired name in std::string data type.
  * @return The directory file path.
  */
-std::string create_directory(std::string directory_name) {
+std::string CREATE_DIRECTORY(std::string directory_name) {
     
     assert(!std::filesystem::create_directory(directory_name));
 
@@ -69,8 +69,13 @@ std::string create_directory(std::string directory_name) {
 
 }
 
-// is it better to generalize or not to generalize?
-std::filesystem::path create_file(const FileCreationConfig& config) {
+/**
+ * @brief Creates file in disk
+ * @details Uses the std::filesystem library to create empty file in disk
+ * @param config File config struct instantiated in engine and passed here.
+ * @return The file path created.
+ */
+std::filesystem::path CREATE_FILE(const FileCreationConfig& config) {
 
     std::ofstream file_creator;
 
@@ -155,7 +160,14 @@ std::filesystem::path create_file(const FileCreationConfig& config) {
     }
 }
 
-std::string select_directory(std::string directory_name) {
+
+/**
+ * @brief Selects directory and traverses them
+ * @details Function called when accessing directory is needed
+ * @param directory_name Directory name to be accessed or traversed.
+ * @return The directory items such as its child items as files.
+ */
+std::string SELECT_DIRECTORY(std::string directory_name) {
     
     std::fstream directory;
 
@@ -177,25 +189,64 @@ std::string select_directory(std::string directory_name) {
     }
 }
 
-// Need to determine the logic, like in here, should the function accept data/value? assuming that selectin file means writing?
-std::string select_file(std::string directory_name, std::string file_name) {
-    
+/**
+ * @brief Writes static data to a file
+ * @details Uses the "static" data or already defined data to write.
+ * @param file_path File path to write the data on.
+ * @param read_obj The input string stream containing the data.
+ * @return The file path of the file with written data.
+ */
+std::filesystem::path STATIC_WRITE_TO_FILE(std::filesystem::path file_path, std::istringstream& read_obj) {
+
     std::fstream file;
 
-    assert(!std::filesystem::exists(directory_name + "/" + file_name));
+    assert(!std::filesystem::exists(file_path));
 
-    file.open(directory_name + "/" + file_name, std::ios::in);
+    file.open(file_path, std::ios::in);
 
     if (file.is_open()) {
-        std::string file_content;
 
-        while (std::getline(file, file_content)) {
-            std::cout << file_content << std::endl;
+        std::string file_store;
+
+        while (std::getline(read_obj, file_store)) {
+            file << file_store;
         }
 
         file.close();
 
-        std::cout << file_content;
-
+        return file_path;
     }
+}
+
+/**
+ * @brief Wrtites dynamic data to file
+ * @details Uses the "dynamic" data or the input stream from the user.
+ * @param file_path File path to write the data on.
+ * @return The file path of the file with written data.
+ */
+std::filesystem::path DYNAMIC_WRITE_TO_FILE(std::filesystem::path file_path) {
+
+    std::fstream file;
+
+    assert(!std::filesystem::exists(file_path));
+
+    file.open(file_path, std::ios::in);
+
+    if (file.is_open()) {
+        
+        std::string file_inputs;
+        int character_size = 0;
+
+        // IF user has to put something like entering the table data?
+        std::cin >> file_inputs;
+
+    // But if user has put something, like the bytes
+        for (int character = 0; character < file_inputs.length(); character++) {
+            for (char character : file_inputs) {
+                file << character;
+            }
+    }
+
+    return file_path;
+
 }
