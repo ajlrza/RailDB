@@ -1,9 +1,9 @@
-#include "query_processor.h"
-#include "storage.h"
-#include "transaction_manager.h"
-#include "account_management.h"
 #include <string>
 #include <iostream>
+#include "src/include/query_processor.h"
+#include "src/include/storage.h"
+#include "src/include/transaction_manager.h"
+#include "src/include/account_management.h"
 
 int main() {
 
@@ -44,7 +44,6 @@ int main() {
 
             if (user_menu_choice == "LOGIN") {
                 
-                FileCreationConfig AccountFile;
                 std::string username;
                 std::string password;
 
@@ -54,16 +53,15 @@ int main() {
                 std::cout << "Username:\n";
                 std::cin >> username;
 
-                AccountFile.file_name = username;
-                AccountFile.chosen_format = DBMSFormat::TEXT_DUMP;
-                AccountFile.directory_path = "accounts";
-
-                std::filesystem::path file_path = CREATE_FILE(AccountFile);
-
                 std::cout << "Password:\n";
                 std::cin >> password;
 
+                FileCreationConfig AccountFile = {username, "accounts", DBMSFormat::TEXT_DUMP};
+
+                std::filesystem::path file_path = CREATE_FILE(AccountFile);
                 std::filesystem::path written_file_path = DYNAMIC_WRITE_TO_FILE(file_path);
+
+                std::cout << written_file_path;
 
                 //perform checks on disk soon
 
@@ -71,7 +69,6 @@ int main() {
             
             if (user_menu_choice == "REGISTER") {
 
-                FileCreationConfig AccountFile;
                 std::string username;
                 std::string password;
                 
@@ -81,25 +78,22 @@ int main() {
                 std::cout << "Username:\n";
                 std::cin >> username;
 
-                AccountFile.file_name = username;
-                AccountFile.chosen_format = DBMSFormat::TEXT_DUMP;
-                AccountFile.directory_path = "accounts";
-
-                std::filesystem::path file_path = CREATE_FILE(AccountFile);
-
                 //perform checks on table on disk for similar soon       
                 
                 std::cout << "Password:\n";
                 std::cin >> password;
                 
-                std::filesystem::path written_file_path = DYNAMIC_WRITE_TO_FILE(file_path);
-                                
+                FileCreationConfig AccountFile = {username, "accounts", DBMSFormat::TEXT_DUMP};
 
+                std::filesystem::path file_path = CREATE_FILE(AccountFile);
+                std::filesystem::path written_file_path = DYNAMIC_WRITE_TO_FILE(file_path);
+
+                std::cout << written_file_path;
+                                
                 //perform checks on disk for similar soon
                 
             }
 
-
+        }
     }
-    
 };
