@@ -1,8 +1,9 @@
+// Headers import first to raise error early and avoid overhead if later
+#include "src/include/table_management.h"
+#include "src/include/data_type_template.h"
 #include <iostream>
 #include <fstream>
 #include <assert.h>
-#include <table_management.h>
-#include <data_type_template.h>
 #include <map>
 #include <filesystem>
 #include <string>
@@ -80,7 +81,7 @@ std::string CREATE_DIRECTORY(std::string directory_name) {
  * @param config File config struct instantiated in engine and passed here.
  * @return The file path created.
  */
-std::filesystem::path CREATE_FILE(const FileCreationConfig& config) {
+std::filesystem::path CREATE_FILE(FileCreationConfig config) {
 
     std::ofstream file_creator;
 
