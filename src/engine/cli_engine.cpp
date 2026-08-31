@@ -61,6 +61,7 @@ int main() {
                 std::filesystem::path file_path = CREATE_FILE(AccountFile);
 
                 std::cout << "Password:\n";
+                std::cin >> password;
 
                 std::filesystem::path written_file_path = DYNAMIC_WRITE_TO_FILE(file_path);
 
