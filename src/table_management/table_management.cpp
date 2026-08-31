@@ -11,118 +11,86 @@
 #include <random>
 #include <any>
 using namespace std;
-// This would be the struct for each database table created
 
-// Basically, this piece of code would automatically initiate a table
-
-// This is also where the table queries would live in
-
-// STRUCTS FOR RAW BYTES
 struct intData {
     int intValue = 0;
-    // should there be metadata?
+
     bool operator!=(int check_value) const {
-        // If this row's ID is 0, it does not exist
-        // If it's anything else, we return true (it does not equal 0, so it's valid).
         return this->intValue != check_value; 
     }
 
     int operator<<(int intValue) const {
-        // Since write template's behavior does "<<" operator
-        // The struct needs to follow it
         return this->intValue;
     }
 };
 
 struct boolData {
     bool boolValue = 0;
-    // To comply with the template, for an empty bool data cell should it be just 0?, but a bool data  can be t or f
-    // 0 = f... and some databases use bool data columns
-    // should there be metadata?
     
     bool operator!=(int check_value) const {
-        // If this bool value is "", undefined, null, return false
-        // If it's anything else, we return true (it does not equal 0, so it's valid).
         return this->boolValue != check_value; 
     }
 
     bool operator<<(bool boolValue) const {
-        // Since write template's behavior does "<<" operator
-        // The struct needs to follow it
         return this->boolValue;
     }
 };
 
 struct floatData {
     float floatValue = 0.0;
-    // should there be metadata?
+
     bool operator!=(int check_value) const {
-        // If the float data is 0 or false?, it does not exist
-        // If it's anything else, we return true (it does not equal 0, so it's valid).
         return this->floatValue != check_value; 
     }
 
     float operator<<(float floatValue) const {
-        // Since write template's behavior does "<<" operator
-        // The struct needs to follow it
         return this->floatValue;
     }
 };
 
 struct stringData {
+
     std::string stringArray = "";
-    // should there be metadata?
+
     bool operator!=(std::string check_value) const {
-        // If this stringArray is "", it does not exist
-        // If it's anything else, we return true (it does not equal 0, so it's valid).
         return this->stringArray != check_value; 
     }
 
     std::string operator<<(std::string stringArray) const {
-        // Since write template's behavior does "<<" operator
-        // The struct needs to follow it
         return this->stringArray;
     }
 };
 
-// dont use stdd vector and std any 
-struct rowData {
 
-    uint32_t rowValue;
-    //manual array? Row;
+struct row_data {
+
+    uint32_t row_value;
+
     int index;
-    int rowCount = 0;
+    int row_count = 0;
 
     bool operator!=(int check_value) const {
-        // If this row's ID is 0, it does not exist
-        // If it's anything else, we return true (it does not equal 0, so it's valid).
         return this->index != check_value; 
     }
 
-    uint32_t operator<<(uint32_t rowValue) const {
-        // Since write template's behavior does "<<" operator
-        // The struct needs to follow it
-        return this->rowValue;
+    uint32_t operator<<(uint32_t row_value) const {
+        return this->row_value;
     }
 
 };
 
-// dont use stdd vector and std any 
-struct colData {
-    std::string colValue;
-    int colID;
+struct col_data {
+    std::string col_value;
+    int col_ID;
 };
 
-// dont use stdd vector and std any 
 struct table {
     std::vector<std::any> Table;
-    bool tableCreated = false;
+    bool table_created = false;
     int size = Table.size();
     std::string default = "Default";
 };
-// will fix them soon^
 
-// Data Type Registry 
 class DataType {
 public:
     virtual ~DataType() = default;
@@ -204,10 +172,10 @@ class BoolDataType: public DataType {
 };
 
 struct Schema {
-    std::string Schema_name;
+    std::string schema_name;
     table Table;
     uint32_t Views;
-    uint32_t Stored_procedures;
+    uint32_t stored_procedures;
 };
 
 class SchemaCreator {
@@ -232,71 +200,61 @@ class SchemaCreator {
 
         void setStoredP(uint32_t stored_procedures) {
             uint32_t stored_procedures = stored_procedures;
-            this->schema.Stored_procedures = stored_procedures;
+            this->schema.stored_procedures = stored_procedures;
         }
 
-        bool storeSchema() {
-            if (createDirectory(this->schema.Schema_name)) {
+        bool store_schema() {
+            if (create_directory(this->schema.schema_name)) {
                 return true;
             }
         }
 
 };
 
-int randomIDAssigner() {
-    // RANDOM SEED
+int rand_ID() {
+
     std::random_device rd; 
-    // GENERATE
+
     std::mt19937 gen(rd()); 
 
-    // RANGE BASIS
     std::uniform_int_distribution<> distr(1, 100); 
 
     return distr(gen);
 };
 
-// In creating a directory, maybe it would be automatic or user generated?
-void createTable(std::string schema_name, std::string name, std::string directory_name) {
-    // assign metadata
-    int tableID = randomIDAssigner();
-    // Only 1kb worth of table name?
-    char nameBlock[64];
+void create_table(std::string schema_name, std::string name, std::string directory_name) {
+    
+    int table_ID = rand_ID();
+    char name_block[64];
     int index = 0;
 
-    // Extract letters
     for (char letter: name) {
-        nameBlock[index] = letter;
+        name_block[index] = letter;
         index = index + 1;
     };
 
-    // Struct for table paeg
-    struct tablePage {
-        int tableID;
-        char* tableName;
+    struct table_page {
+        int table_ID;
+        char* table_name;
     };
 
-    // Configure table page
-    tablePage Table;
-    Table.tableID = tableID;
-    Table.tableName = nameBlock;
+    table_page Table;
+    Table.table_ID = table_ID;
+    Table.table_name = name_block;
 
-    // Create the table in the storage disk
-    createFile(directory_name, Table.tableName, "Creation", ".txt");
+    CREATE_FILE(directory_name, Table.table_name, "Creation", ".txt");
 
-    // Write to file the metadata
-    writeFile(schema_name, Table.tableName, Table.tableID);
+    STATIC_WRITE_TO_FILE(schema_name, Table.table_name, Table.table_ID);
 
 };
 
-// Oh yeah THE DIRECTORY itself should be the schema(?)
-void addCol(std::string schema_name, std::string table_name, std::string col_name, std::string data_type) {
-     colData columnData;
-     // wait what do i have two different select for? ..
-     // we oughta get where the column is from or get the schema it is from.. need to figure it out
-     if (selectFile(schema_name, table_name)) {
-        // assume that we get all the columns from this schema
-        // jesus i really gotta get low level and convert to uint32_t? or just manage them all myself
-        writeFile(schema_name, table_name, columnData);
+
+void add_col(std::string schema_name, std::string table_name, std::string col_name, std::string data_type) {
+     
+     col_data column_data;
+
+     if (SELECT_FILE(schema_name, table_name)) {
+        STATIC_WRITE_TO_FILE(schema_name, table_name, column_data);
      }
 };
 
