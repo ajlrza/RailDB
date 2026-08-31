@@ -8,16 +8,6 @@
 #include <string>
 using namespace std;
 
-std::string CREATE_DIRECTORY(std::string directory_name);
-
-std::filesystem::path CREATE_FILE(const FileCreationConfig& config);
-
-std::string SELECT_DIRECTORY(std::string directory_name);
-
-std::filesystem::path STATIC_WRITE_TO_FILE(std::filesystem::path file_path, std::istringstream& read_obj);
-
-std::filesystem::path DYNAMIC_WRITE_TO_FILE(std::filesystem::path file_path);
-
 enum class DBMSFormat {
     RAILDB_BINARY, // Custom binary format for DB tables
     TEXT_DUMP,     // For exporting data as text (.txt)
@@ -32,8 +22,18 @@ struct FileCreationConfig {
 };
 
 struct rdb {
-    int8_t hexstore_id ;
-    uint8_t table[8];
+    int32_t hexstore_id ;
+    uint32_t table[15000];
 };
+
+std::string CREATE_DIRECTORY(std::string directory_name);
+
+std::filesystem::path CREATE_FILE(FileCreationConfig config);
+
+std::string SELECT_DIRECTORY(std::string directory_name);
+
+std::filesystem::path STATIC_WRITE_TO_FILE(std::filesystem::path file_path, std::istringstream& read_obj);
+
+std::filesystem::path DYNAMIC_WRITE_TO_FILE(std::filesystem::path file_path);
 
 #endif
