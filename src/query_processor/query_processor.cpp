@@ -1,12 +1,10 @@
+#include "src/include/storage.h"
 #include <iostream>
 #include <map>
 #include <string>
 #include <unordered_map>
 #include <filesystem>
-#include <storage.h>
 using namespace std;
-
-// QUEUE
 
 struct QueueNode {
     std::string user;
@@ -61,7 +59,7 @@ class Queue {
         int head = 0;
         int tail = 0;
         static const int max_size = 5; 
-        queueNode queue_array[max_size];
+        QueueNode queue_array[max_size];
         int count = 0;
 
         QueueNode pass_node(int head) {
@@ -89,7 +87,7 @@ class Queue {
         else if (this->count > 1) {
                 this->head = (head + 1) % max_size;
                 this->count = count - 1;
-                passNode(this->head);
+                pass_node(this->head);
             }
             return true;
         }
@@ -136,13 +134,18 @@ struct EvictedSubtree {
 
 class StandardAST {
     private:
-        int count 0;
-        std::Vector<SyntaxNode> directed_graph;
+        int count = 0;
+        std::vector<SyntaxNode> directed_graph;
         std::vector<int> directed_graph_weights;
         int total_vertices = 0;
         int total_directed_edges = 0;
 
     public:
+
+        void init() {
+
+        }
+
         int V() {
             return total_vertices;
         };
@@ -151,13 +154,13 @@ class StandardAST {
             return total_directed_edges;
         };
 
-        void add_edge(int v, int w) {
+        void add_edge(int v, int w, TokenType token) {
             if (directed_graph.empty()) {
                 SyntaxNode vertex;
                 vertex.RightChild = 0;
                 vertex.LeftChild = 0;
                 vertex.RootChild = 0;
-                vertex.Token = v;
+                vertex.Token = token;
                 directed_graph.push_back(vertex);
                 directed_graph_weights.push_back(w);
             }
@@ -165,8 +168,12 @@ class StandardAST {
 
         void remove_edge(int v, int w) {
             if (directed_graph.empty()) {
-                std::cout << TokenType::NONE;
+                std::cout << "TokenType::NONE";
             }
+        }
+
+        bool is_buffering() {
+
         }
 
 };
@@ -181,6 +188,10 @@ class StreamAST {
         int left = 0;  
 
     public:
+
+        void init() {
+
+        }
 
         TokenType get_token_at_index(int index) {
                 if (index < 0 || index >= max_size) {
@@ -206,12 +217,12 @@ class StreamAST {
 
                     this->emit_evicted_subtree(this->previous_subtree.);
 
-                    this->Left = (this->left + 1) % this->max_size;
+                    this->left = (this->left + 1) % this->max_size;
                     this->count -= 1;
                 }
 
                 this->node_buffer[this->right] = Node;
-                this->Right = (this->right + 1) % this->max_size;
+                this->right = (this->right + 1) % this->max_size;
                 this->count += 1;
         }
     
@@ -237,6 +248,14 @@ class StreamAST {
             return node_buffer[current_target_idx].Token;
         }
 
+        TokenType find_parent_token_of(int node) {
+
+        }
+
+        TokenType emit_evicted_subtree(EvictedSubtree subtree) {
+
+        }
+
         bool collapse_tree() {
             for (this->count; this->count <= max_size; count--) {
                 this->node_buffer[this->count] = node_buffer[this->count - 1];
@@ -249,20 +268,20 @@ struct ASTCatalog {
     StreamAST stream_ast;
 };
 
-ASTCatalog ASTRouter(DBMSFormat file) {
+ASTCatalog ASTRouter(DBMSFormat& file) {
     ASTCatalog catalog;
     ASTCatalog* catalog_ptr = &catalog;
 
-    if (catalog.standard_ast.is_buffering) {
-        StandardAST my_standard = catalogPtr->standard_ast;
-        StreamingAST my_streaming = catalogPtr->streaming_ast();
+    if (catalog.standard_ast.is_buffering()) {
+        StandardAST standard = catalog_ptr->standard_ast;
+        StreamAST streaming = catalog_ptr->stream_ast();
     }
 
     if (file.size() < 1288) {
-        StandardAST my_standard = catalog.standard_ast.init(file);
+        StandardAST standard = catalog.standard_ast.init(file);
     } 
     else if (file.size() > 1288) {
-        StreamingAST my_streaming = catalog.streaming_ast.init(file);
+        StreamAST streaming = catalog.stream_ast.init(file);
     }
 };
 
