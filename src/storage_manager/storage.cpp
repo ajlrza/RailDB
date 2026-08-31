@@ -53,6 +53,11 @@ struct FileCreationConfig {
     DBMSFormat chosen_format; 
 };
 
+struct rdb {
+    int32_t hexstore_id ;
+    uint32_t table[15000];
+};
+
 /**
  * @brief Creates the directory in disk
  * @details Uses the std::filesystem library to manipulate the creation
