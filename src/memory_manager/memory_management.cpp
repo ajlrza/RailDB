@@ -55,9 +55,9 @@ void LRU_Add(BaseCHC_NDE &cache_node) {
        LRUPointer[sizeof(LRU) / sizeof(LRU[0]) = &cache_node;
     }
 
-    &cache_node.next = 0;
-    &cache_node.prev += LRU[sizeof(LRU) / sizeof(LRU[0]) - 1
-    LRU[sizeof(LRU) / sizeof(LRU[0])] =
+    &cache_node.next += LRU[sizeof(LRU) / sizeof(LRU[0]) + 1;
+    &cache_node.prev += LRU[sizeof(LRU) / sizeof(LRU[0]) - 1;
+    LRUPointer[sizeof(LRU) / sizeof(LRU[0])] = &cache_node;
     
 }
 
