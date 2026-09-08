@@ -12,52 +12,21 @@ using namespace std;
 // RAM management
 // SOON
 struct BaseCHC_NDE {
-    virtual void next() = 0;
-    virtual void prev() = 0;
+    int next = 0;
+    int prev = 0;
 };
 
-struct U_Table_CHC_NDE : public BaseCHC_NDE {
-    int table_id = 0;
+BaseCHC_NDE U_Table_CHC_NDE; 
 
-    void next() override {};
+BaseCHC_NDE S_Table_CHC_NDE;
 
-    void prev() override {};
-};
+BaseCHC_NDE U_Query_CHC_NDE;
 
-struct S_Table_CHC_NDE : public BaseCHC_NDE {
-    int table_id = 0;
+BaseCHC_NDE S_Query_CHC_NDE;
 
-    void next() override {};
+BaseCHC_NDE Username_CHC_NDE;
 
-    void prev() override {};
-};
-
-struct U_Query_CHC_NDE : public BaseCHC_NDE {
-    QueueNode Node;
-
-    void next() override {};
-
-    void prev() override {};
-};
-
-struct S_Query_CHC_NDE : public BaseCHC_NDE {
-    void next() override {};
-    
-    void prev() override {};
-};
-
-
-struct Username_CHC_NDE : public BaseCHC_NDE {
-    void next() override {};
-
-    void prev() override {};
-};
-
-struct Password_CHC_NDE : public BaseCHC_NDE {
-    void next() override {};
-
-    void prev() override {};
-};
+BaseCHC_NDS Password_CHC_NDE; 
 
 enum CoreCaches {
     U_Table, 
@@ -74,9 +43,10 @@ enum AuxCaches {
     STRTREE,
 };
 
+
+
 class LRU {
 
-    int count = 0;
     static std::vector<CoreCaches> core_caches;
     static std::vector<AuxCaches> aux_caches;
 
