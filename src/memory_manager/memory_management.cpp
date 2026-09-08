@@ -26,7 +26,7 @@ BaseCHC_NDE S_Query_CHC_NDE;
 
 BaseCHC_NDE Username_CHC_NDE;
 
-BaseCHC_NDS Password_CHC_NDE; 
+BaseCHC_NDE Password_CHC_NDE; 
 
 enum CoreCaches {
     U_Table, 
@@ -43,50 +43,15 @@ enum AuxCaches {
     STRTREE,
 };
 
-
-
-class LRU {
-
-    static std::vector<CoreCaches> core_caches;
-    static std::vector<AuxCaches> aux_caches;
-
-    LRU() {};
-
-    private:
-
-        void put() {
-
-        };
-
-        void evict() {
-
-        };
-
-    public:
-
-        void add() {
-
-        };
-
-        void remove() {
-            
-        };
-
-        void get() {
-
-        };
-
-        void size() {
-
-        };
-}
+BaseCHC_NDE LRU[128]
+BaseCHC_NDE *LRUPointer = &LRU;
 
 
 class MemoryCreator: public std::pmr::memory_resource {
     
     MemoryCreator() {
 
-    }
+            }
     
     private:
         void* do_allocate(std::size_t bytes, std::size_t alignment) override {
