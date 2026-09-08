@@ -45,10 +45,25 @@ enum AuxCaches {
 
 BaseCHC_NDE LRU[128]
 BaseCHC_NDE *LRUPointer = &LRU;
+size_t LRU_Size = sizeof(LRU);
 
+void LRU_Add(BaseCHC_NDE &cache_node) {
+    
+    if !(LRU[0]) {
+       &cache_node.next = 0;
+       &cache_node.prev = 0;
+       LRUPointer[sizeof(LRU) / sizeof(LRU[0]) = &cache_node;
+    }
+
+    &cache_node.next = 0;
+    &cache_node.prev += LRU[sizeof(LRU) / sizeof(LRU[0]) - 1
+    LRU[sizeof(LRU) / sizeof(LRU[0])] =
+    
+}
 
 class MemoryCreator: public std::pmr::memory_resource {
-    
+
+
     MemoryCreator() {
 
             }
