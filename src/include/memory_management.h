@@ -1,5 +1,5 @@
-#ifndef MEMORY_MANAGEMENT.H
-#define MEMORY_MANAGEMENT.H
+#ifndef MEMORY_MANAGEMENT
+#define MEMORY_MANAGEMENT
 #include <iostream>
 #include <map>
 #include <unordered_map>

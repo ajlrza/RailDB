@@ -1,10 +1,18 @@
-#include "src/include/storage.h"
 #include <iostream>
 #include <map>
 #include <string>
 #include <unordered_map>
 #include <filesystem>
+#include <concepts>
+#include "storage.h"
 using namespace std;
+
+template<typename T>
+concept Lexer = requires(T LexerType) {
+    { LexerType.Regex() } -> std::same_as<std::string>;
+    { LexerType.Query() } -> std::same_as<std::string>;
+    { LexerType.Math() } -> std::same_as<int>;
+};
 
 struct QueueNode {
     std::string user;
@@ -16,7 +24,26 @@ struct QueryClasses {
     QueryParser lexical_parser;
     QueryOptimizer lexical_optimzer;
     QueryExecutor lexical_executor;
-    QueryProcess query_processor;
+    QueryProcessor query_processor;
+};
+
+struct SyntaxNode {
+    TokenType Token;
+    int LeftChild;
+    int RightChild;
+    int RootChild;
+};
+
+struct EvictedSubtree {
+    TokenType PreviousToken;
+    TokenType RightChild;
+    TokenType RootChild;
+    TokenType LeftChild;
+};
+
+struct ASTCatalog {
+    StandardAST standard_ast;
+    StreamAST stream_ast;
 };
 
 enum class SQLType {
@@ -114,20 +141,6 @@ class Queue {
                 return false;
             }
         }
-};
-
-struct SyntaxNode {
-    TokenType Token;
-    int LeftChild;
-    int RightChild;
-    int RootChild;
-};
-
-struct EvictedSubtree {
-    TokenType PreviousToken;
-    TokenType RightChild;
-    TokenType RootChild;
-    TokenType LeftChild;
 };
 
 // Stop removing rootchild, get previous subtrees properly
@@ -263,32 +276,30 @@ class StreamAST {
         }
 };
 
-struct ASTCatalog {
-    StandardAST standard_ast;
-    StreamAST stream_ast;
-};
-
 ASTCatalog ASTRouter(DBMSFormat& file) {
-    ASTCatalog catalog;
-    ASTCatalog* catalog_ptr = &catalog;
 
-    if (catalog.standard_ast.is_buffering()) {
-        StandardAST standard = catalog_ptr->standard_ast;
-        StreamAST streaming = catalog_ptr->stream_ast();
+    ASTCatalog trees;
+    ASTCatalog* tree_ptr = &trees;
+
+    // Concurrent?
+    
+    if (trees.standard_ast.is_buffering()) {
+        StreamAST standard = tree_ptr->stream_ast;
+        StandardAST streaming = tree_ptr->standard_ast;
     }
 
     if (file.size() < 1288) {
-        StandardAST standard = catalog.standard_ast.init(file);
+        StandardAST standard = trees.standard_ast.init(file);
     } 
     else if (file.size() > 1288) {
-        StreamAST streaming = catalog.stream_ast.init(file);
+        StreamAST streaming = trees.stream_ast.init(file);
     }
 };
 
 QueryClasses query_pipeline;
 
 //I shouldn't use query processor through class? for a db engine, ormaybe we can, long as its not for operational CPU
-class QueryProcess {
+class QueryProcessor {
     public: 
         bool start_querying(std::string user, std::string user_query) {
             QueueNode Node;
@@ -302,7 +313,7 @@ class QueryProcess {
 
 class QueryLexer {
     public:
-        bool lexical_analysis(std::string user_query) {
+        bool tokenize(std::string user_query) {
                 // Need an algorithm to extract tokens
                 int char_idx = 0;
                 int word_start = 0;
@@ -327,7 +338,7 @@ class QueryLexer {
                             word_start = char_idx + 1;
                         }
                     } 
-                    else if (char_idd + 1 == user_query.length() || extractedToken != "" && charIndex + 1 == userQuery.length()) {
+                    else if (char_idx + 1 == user_query.length() || extracted_token != "" && char_idx + 1 == user_query.length()) {
                         extracted_token = user_query.substr(word_start, char_idx - word_start + 1); 
                         TokenType token = token_type_catalog.at(extracted_token);
                     }
@@ -359,7 +370,7 @@ class QueryOptimizer {
 class QueryExecutor {
     public:
         QueueNode current_node;
-        QueryLexer query_lex;
+        QueryLexer query_lexer;
 
         QueryExecutor(QueueNode node) {
             this->current_node = node;
@@ -367,7 +378,7 @@ class QueryExecutor {
         }
 
         std::string execute_query() {
-            bool analyze_query = query_lex.lexical_analyzer(this->current_node.query);
+            bool analyze_query = query_lexer.tokenize(this->current_node.query);
             assert(analyze_query == true);
             // Need a tree soon, to actually execute query?
 
