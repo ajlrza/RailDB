@@ -12,6 +12,7 @@ using namespace std;
 // RAM management
 // SOON
 struct BaseCHC_NDE {
+    int pos = 0;
     int next = 0;
     int prev = 0;
 };
@@ -43,22 +44,58 @@ enum AuxCaches {
     STRTREE,
 };
 
-BaseCHC_NDE LRU[128]
-BaseCHC_NDE *LRUPointer = &LRU;
+BaseCHC_NDE LRU[128];
+BaseCHC_NDE *LRUPointer = LRU;
 size_t LRU_Size = sizeof(LRU);
 
 void LRU_Add(BaseCHC_NDE &cache_node) {
     
-    if !(LRU[0]) {
-       &cache_node.next = 0;
-       &cache_node.prev = 0;
-       LRUPointer[sizeof(LRU) / sizeof(LRU[0]) = &cache_node;
+    if (sizeof(LRU) / sizeof(LRU[0]) == 0) {
+       cache_node.pos = 0;
+       cache_node.next = 0;
+       cache_node.prev = 0;
+       LRUPointer[sizeof(LRU) / sizeof(LRU[0])] = cache_node;
     }
 
-    &cache_node.next += LRU[sizeof(LRU) / sizeof(LRU[0]) + 1;
-    &cache_node.prev += LRU[sizeof(LRU) / sizeof(LRU[0]) - 1;
-    LRUPointer[sizeof(LRU) / sizeof(LRU[0])] = &cache_node;
+    cache_node.pos += sizeof(LRU) / sizeof(LRU[0]);
+
+    if (sizeof(LRU) / sizeof(LRU[0]) + 1 > sizeof(LRU) / sizeof(LRU[0])) {
+        LRU_Evict();
+    } 
+    else if (sizeof(LRU) / sizeof(LRU[0]) - 1 < sizeof(LRU) / sizeof(LRU[0])) {
+        
+        cache_node.pos = sizeof(LRU) / sizeof(LRU[0]);
+
+        cache_node.next += sizeof(LRU) / sizeof(LRU[0]) + 1;
+        cache_node.prev += 0;
+
+        LRUPointer[sizeof(LRU) / sizeof(LRU[0])] = cache_node;
+    }
+
+    cache_node.next += sizeof(LRU) / sizeof(LRU[0]) + 1;
+    cache_node.prev += sizeof(LRU) / sizeof(LRU[0]) - 1;
     
+    LRUPointer[sizeof(LRU) / sizeof(LRU[0])] = cache_node;
+    
+}
+
+void LRU_Evict() {
+
+    if (sizeof(LRU) / sizeof(LRU[0]) == 1) {
+        LRUPointer[sizeof(LRU) / sizeof(LRU[0])].next = 0;
+        LRUPointer[sizeof(LRU) / sizeof(LRU[0])].prev = 0;
+        return;
+    }
+
+    if (sizeof(LRU) / sizeof(LRU[0]) == 0) {
+        return;
+    }
+
+    LRUPointer[0].pos = (LRUPointer[0].pos + 1) % sizeof(LRU) / sizeof(LRU[0]);
+    LRUPointer[0].next = sizeof(LRU) / sizeof(LRU[0]) + 1;
+    LRUPointer[0].prev = LRUPointer[LRUPointer[0].pos - 1].pos;
+
+    return;
 }
 
 class MemoryCreator: public std::pmr::memory_resource {
