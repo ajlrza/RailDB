@@ -46,54 +46,57 @@ enum AuxCaches {
 
 BaseCHC_NDE LRU[128];
 BaseCHC_NDE *LRUPointer = LRU;
-size_t LRU_Size = sizeof(LRU);
+
+size_t LRUSize = 0;
 
 void LRU_Add(BaseCHC_NDE &cache_node) {
     
-    if (sizeof(LRU) / sizeof(LRU[0]) == 0) {
-       cache_node.pos = 0;
-       cache_node.next = 0;
-       cache_node.prev = 0;
-       LRUPointer[sizeof(LRU) / sizeof(LRU[0])] = cache_node;
+    if (LRUSize == 0) {
+
+       cache_node.pos = LRUSize;
+
+       cache_node.next = LRUSize + 1;
+       cache_node.prev = LRUSize;
+
+       LRUPointer[LRUSize] = cache_node;
+       LRUSize++;
     }
 
-    cache_node.pos += sizeof(LRU) / sizeof(LRU[0]);
-
-    if (sizeof(LRU) / sizeof(LRU[0]) + 1 > sizeof(LRU) / sizeof(LRU[0])) {
-        LRU_Evict();
-    } 
-    else if (sizeof(LRU) / sizeof(LRU[0]) - 1 < sizeof(LRU) / sizeof(LRU[0])) {
+    if (LRUSize + 1 > sizeof(LRU) / sizeof(LRU[0])) {
         
-        cache_node.pos = sizeof(LRU) / sizeof(LRU[0]);
+        LRU_Evict();
+        cache_node.pos = LRUSize;
 
-        cache_node.next += sizeof(LRU) / sizeof(LRU[0]) + 1;
-        cache_node.prev += 0;
+        cache_node.next = LRUSize;
+        cache_node.prev = LRUPointer[LRUSize - 1].pos;
 
-        LRUPointer[sizeof(LRU) / sizeof(LRU[0])] = cache_node;
-    }
+        LRUPointer[LRUSize] = cache_node;
 
-    cache_node.next += sizeof(LRU) / sizeof(LRU[0]) + 1;
-    cache_node.prev += sizeof(LRU) / sizeof(LRU[0]) - 1;
+        LRUSize++;
+    } 
+
+    LRUSize++;
+    cache_node.pos = LRUSize;
+
+    cache_node.next = LRUPointer[LRUSize + 1].pos;
+    cache_node.prev = LRUPointer[LRUSize - 1].pos;
     
-    LRUPointer[sizeof(LRU) / sizeof(LRU[0])] = cache_node;
+    LRUPointer[LRUSize] = cache_node;
     
 }
 
 void LRU_Evict() {
 
-    if (sizeof(LRU) / sizeof(LRU[0]) == 1) {
-        LRUPointer[sizeof(LRU) / sizeof(LRU[0])].next = 0;
-        LRUPointer[sizeof(LRU) / sizeof(LRU[0])].prev = 0;
+    if (LRUSize == 0) {
         return;
     }
 
-    if (sizeof(LRU) / sizeof(LRU[0]) == 0) {
-        return;
-    }
+    LRUPointer[LRUSize].pos = (LRUSize + 1) % sizeof(LRU) / sizeof(LRU[0]);
 
-    LRUPointer[0].pos = (LRUPointer[0].pos + 1) % sizeof(LRU) / sizeof(LRU[0]);
-    LRUPointer[0].next = sizeof(LRU) / sizeof(LRU[0]) + 1;
-    LRUPointer[0].prev = LRUPointer[LRUPointer[0].pos - 1].pos;
+    LRUPointer[LRUPointer[LRUSize].pos].next = 0;
+    LRUPointer[LRUPointer[LRUSize].pos].prev = 0;
+
+    LRUSize--;
 
     return;
 }
