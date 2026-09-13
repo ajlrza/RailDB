@@ -1,5 +1,5 @@
-#ifndef ACCOUNT_MANAGEMENT.H
-#define ACCOUNT_MANAGEMENT.H
+#ifndef ACCOUNT_MANAGEMENT
+#define ACCOUNT_MANAGEMENT
 #include <map>
 #include <string>
 

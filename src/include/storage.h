@@ -1,5 +1,5 @@
-#ifndef STORAGE.H
-#define STORAGE.H
+#ifndef STORAGE
+#define STORAGE
 #include <iostream>
 #include <fstream>
 #include <assert.h>

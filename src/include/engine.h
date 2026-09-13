@@ -1,5 +1,5 @@
-#ifndef ENGINE.H
-#define ENGINE.H
+#ifndef ENGINE
+#define ENGINE
 #include <map>
 #include <string>
 

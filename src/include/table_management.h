@@ -1,5 +1,5 @@
-#ifndef TRANSACTION_MANAGER.H
-#define TRANSACTION_MANAGER.H
+#ifndef TRANSACTION_MANAGER
+#define TRANSACTION_MANAGER
 #include <iostream>
 #include <fstream>
 #include <assert.h>
