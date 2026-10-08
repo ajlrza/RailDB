@@ -1,9 +1,11 @@
 #include <string>
 #include <iostream>
-#include "src/include/query_processor.h"
-#include "src/include/storage.h"
-#include "src/include/transaction_manager.h"
-#include "src/include/account_management.h"
+#include "query_processor.h"
+#include "storage.h"
+#include "transaction_manager.h"
+#include "account_management.h"
+
+
 
 int main() {
 

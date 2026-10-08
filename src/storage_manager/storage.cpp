@@ -1,6 +1,6 @@
 // Headers import first to raise error early and avoid overhead if later
-#include "src/include/table_management.h"
-#include "src/include/data_type_template.h"
+#include "table_management.h"
+#include "data_type_template.h"
 #include <iostream>
 #include <fstream>
 #include <assert.h>
