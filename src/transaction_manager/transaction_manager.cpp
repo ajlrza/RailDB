@@ -9,16 +9,36 @@ using namespace std;
 
 // implement std::mutex
 
-struct QueryOperation;
+struct QueryOperation {
 
-struct TableOperation;
+};
 
-struct MemoryOperation;
+struct TableOperation {
 
-struct StorageOperation;
+};
 
-struct EngineOperation;
+struct MemoryOperation {
 
-struct TransactionUnit;
+};
 
-struct Transaction;
+struct StorageOperation {
+
+};
+
+struct EngineOperation {
+    
+};
+
+struct TransactionUnit {
+    int transaction_id;
+    QueryOperation Q;
+    TableOperation T;
+    MemoryOperation M;
+    StorageOperation S;
+    EngineOperation E;
+};
+
+struct Transaction {
+    TransactionUnit Units[128];
+};
+
