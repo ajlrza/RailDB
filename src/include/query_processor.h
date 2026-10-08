@@ -6,12 +6,25 @@
 #include <string>
 using namespace std;
 
-template<typename T>
-concept Lexer = requires(T LexerType) {
-    { LexerType.Regex() } -> std::same_as<std::string>;
-    { LexerType.Query() } -> std::same_as<std::string>;
-    { LexerType.Math() } -> std::same_as<int>;
-};
+class QueryProcessor {};
+
+class QueryLexer {};
+
+class QueryParser {};
+
+class QueryOptimizer {};
+
+class QueryExecutor {};
+
+enum class SQLType;
+
+enum class TokenType;
+
+std::unordered_map<std::string, SQLType> type_system_catalog;
+
+class StandardAST;
+
+class StreamAST;
 
 struct QueueNode {
     std::string user;
@@ -44,35 +57,6 @@ struct ASTCatalog {
     StandardAST standard_ast;
     StreamAST stream_ast;
 };
-
-enum class SQLType {
-    INTEGER,
-    BOOLEAN,
-    VARCHAR,
-};
-
-enum class TokenType {
-    ADD,
-    INTO,
-    GET,
-    FROM,
-    REMOVE,
-    TABLE,
-    COLUMN,
-    NONE = true
-};
-
-class QueryProcessor {};
-
-class QueryLexer {};
-
-class QueryParser {};
-
-class QueryOptimizer {};
-
-class QueryExecutor {};
-
-std::unordered_map<std::string, SQLType> type_system_catalog;
 
 
 #endif
