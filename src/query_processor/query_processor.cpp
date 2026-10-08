@@ -4,81 +4,13 @@
 #include <unordered_map>
 #include <filesystem>
 #include <concepts>
+#include <vector>
 #include "storage.h"
 using namespace std;
-
-template<typename T>
-concept Lexer = requires(T LexerType) {
-    { LexerType.Regex() } -> std::same_as<std::string>;
-    { LexerType.Query() } -> std::same_as<std::string>;
-    { LexerType.Math() } -> std::same_as<int>;
-};
 
 struct QueueNode {
     std::string user;
     std::string query;
-};
-
-struct QueryClasses {
-    QueryLexer lexical_analyzer;
-    QueryParser lexical_parser;
-    QueryOptimizer lexical_optimzer;
-    QueryExecutor lexical_executor;
-    QueryProcessor query_processor;
-};
-
-struct SyntaxNode {
-    TokenType Token;
-    int LeftChild;
-    int RightChild;
-    int RootChild;
-};
-
-struct EvictedSubtree {
-    TokenType PreviousToken;
-    TokenType RightChild;
-    TokenType RootChild;
-    TokenType LeftChild;
-};
-
-struct ASTCatalog {
-    StandardAST standard_ast;
-    StreamAST stream_ast;
-};
-
-enum class SQLType {
-    INTEGER,
-    BOOLEAN,
-    VARCHAR,
-};
-
-enum class TokenType {
-    ADD,
-    INTO,
-    GET,
-    FROM,
-    REMOVE,
-    TABLE,
-    COLUMN,
-    NONE = true
-};
-
-std::unordered_map<std::string, SQLType> type_system_catalog = {
-    {"INT", SQLType::INTEGER},
-    {"INTEGER", SQLType::INTEGER},
-    {"BOOL", SQLType::BOOLEAN},
-    {"BOOLEAN", SQLType::BOOLEAN}
-};
-
-std::unordered_map<std::string, TokenType> token_type_catalog = {
-    {"ADD", TokenType::ADD},
-    {"INTO", TokenType::INTO},
-    {"GET", TokenType::GET},
-    {"FROM", TokenType::FROM},
-    {"REMOVE", TokenType::REMOVE},
-    {"TABLE", TokenType::TABLE},
-    {"COLUMN", TokenType::COLUMN},
-    {"NONE", TokenType::NONE}
 };
 
 class Queue {
@@ -107,16 +39,17 @@ class Queue {
         }
 
         bool Dequeue() {
-        if (this->count == 0) {
-            return false;
-        }
-
-        else if (this->count > 1) {
-                this->head = (head + 1) % max_size;
-                this->count = count - 1;
-                pass_node(this->head);
+            
+            if (this->count == 0) {
+                return false;
             }
-            return true;
+
+            else if (this->count > 1) {
+                    this->head = (head + 1) % max_size;
+                    this->count = count - 1;
+                    pass_node(this->head);
+                }
+                return true;
         }
 
         QueueNode Front() {
@@ -144,6 +77,42 @@ class Queue {
 };
 
 // Stop removing rootchild, get previous subtrees properly
+
+enum class TokenType {
+    ADD,
+    INTO,
+    GET,
+    FROM,
+    REMOVE,
+    TABLE,
+    COLUMN,
+    NONE = true
+};
+
+std::unordered_map<std::string, TokenType> token_type_catalog = {
+    {"ADD", TokenType::ADD},
+    {"INTO", TokenType::INTO},
+    {"GET", TokenType::GET},
+    {"FROM", TokenType::FROM},
+    {"REMOVE", TokenType::REMOVE},
+    {"TABLE", TokenType::TABLE},
+    {"COLUMN", TokenType::COLUMN},
+    {"NONE", TokenType::NONE}
+};
+
+struct SyntaxNode {
+    TokenType Token;
+    int LeftChild;
+    int RightChild;
+    int RootChild;
+};
+
+struct EvictedSubtree {
+    TokenType PreviousToken;
+    TokenType RightChild;
+    TokenType RootChild;
+    TokenType LeftChild;
+};
 
 class StandardAST {
     private:
@@ -214,6 +183,7 @@ class StreamAST {
             }
 
         void add_child(SyntaxNode &Node) {
+            
             if (this->count == this->max_size) {
                 
                     int eviction_target = this->left;
@@ -276,28 +246,46 @@ class StreamAST {
         }
 };
 
-ASTCatalog ASTRouter(DBMSFormat& file) {
 
-    ASTCatalog trees;
-    ASTCatalog* tree_ptr = &trees;
+struct FileChunk {
+    int size;
+    char32_t data[1288]; 
+};
+
+void ASTRouter(std::string file) {
+
+    StandardAST standard;
+    StreamAST stream;
+    FileChunk tmp;
 
     // Concurrent?
     
-    if (trees.standard_ast.is_buffering()) {
-        StreamAST standard = tree_ptr->stream_ast;
-        StandardAST streaming = tree_ptr->standard_ast;
+    if (standard.is_buffering()) {
+
     }
 
-    if (file.size() < 1288) {
-        StandardAST standard = trees.standard_ast.init(file);
+    if (tmp.size < 1288) {
+
     } 
-    else if (file.size() > 1288) {
-        StreamAST streaming = trees.stream_ast.init(file);
+    else if (tmp.size > 1288) {
+
     }
 };
 
-QueryClasses query_pipeline;
 
+
+enum class SQLType {
+    INTEGER,
+    BOOLEAN,
+    VARCHAR,
+};
+
+std::unordered_map<std::string, SQLType> type_system_catalog = {
+    {"INT", SQLType::INTEGER},
+    {"INTEGER", SQLType::INTEGER},
+    {"BOOL", SQLType::BOOLEAN},
+    {"BOOLEAN", SQLType::BOOLEAN}
+};
 //I shouldn't use query processor through class? for a db engine, ormaybe we can, long as its not for operational CPU
 class QueryProcessor {
     public: 
@@ -333,7 +321,8 @@ class QueryLexer {
                             char_idx += 1;
                             continue;
                         }
-                        bool parse_token = query_pipeline.lexical_analyzer(extracted_token);
+                        QueryParser query_pipeline;
+                        bool parse_token = query_pipeline->lexical_parser->lexical_parsing(extracted_token);
                         if (parse_token == true) {
                             word_start = char_idx + 1;
                         }
